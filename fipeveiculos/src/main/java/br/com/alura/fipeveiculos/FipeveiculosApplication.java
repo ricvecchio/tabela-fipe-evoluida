@@ -17,11 +17,12 @@ public class FipeveiculosApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 		var consumoApi = new ConsumoApi();
-//		var json = consumoApi.obterDados("https://parallelum.com.br/fipe/api/v1/carros/marcas/");
-		var json = consumoApi.obterDados("https://www.omdbapi.com/?t=gilmore+girls&apikey=6585022c");
-		System.out.println(json);
+		var json = consumoApi.obterDados("https://parallelum.com.br/fipe/api/v1/carros/marcas/");
+//		var json = consumoApi.obterDados("https://www.omdbapi.com/?t=gilmore+girls&apikey=6585022c");
+		String jsonFormatado = json.replace("[", "").replace("]", "");
+		System.out.println(jsonFormatado);
 		ConverteDados conversor = new ConverteDados();
-		DadosMarca dados = conversor.obterDados(json, DadosMarca.class);
+		DadosMarca dados = conversor.obterDados(jsonFormatado, DadosMarca.class);
 		System.out.println(dados);
 	}
 }
