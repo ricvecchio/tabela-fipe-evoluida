@@ -1,8 +1,6 @@
 package br.com.alura.fipeveiculos;
 
-import br.com.alura.fipeveiculos.model.DadosMarca;
-import br.com.alura.fipeveiculos.service.ConsumoApi;
-import br.com.alura.fipeveiculos.service.ConverteDados;
+import br.com.alura.fipeveiculos.principal.Principal;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -16,13 +14,8 @@ public class FipeveiculosApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		var consumoApi = new ConsumoApi();
-		var json = consumoApi.obterDados("https://parallelum.com.br/fipe/api/v1/carros/marcas/");
-//		var json = consumoApi.obterDados("https://www.omdbapi.com/?t=gilmore+girls&apikey=6585022c");
-		String jsonFormatado = json.replace("[", "").replace("]", "");
-		System.out.println(jsonFormatado);
-		ConverteDados conversor = new ConverteDados();
-		DadosMarca dados = conversor.obterDados(jsonFormatado, DadosMarca.class);
-		System.out.println(dados);
+		Principal principal = new Principal();
+		principal.exibeMenu();
+
 	}
 }
