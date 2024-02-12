@@ -28,11 +28,11 @@ public class Principal {
         String endereco;
 
         if (tipoVeiculo.toLowerCase().contains("carr")) {
-            endereco = URL_BASE + "carros/marcas";
+            endereco = URL_BASE + "carros/marcas/";
         }    else if (tipoVeiculo.toLowerCase().contains("mot")) {
-            endereco = URL_BASE + "motos/marcas";
+            endereco = URL_BASE + "motos/marcas/";
         }    else {
-            endereco = URL_BASE + "caminhoes/marcas";
+            endereco = URL_BASE + "caminhoes/marcas/";
         }
 
         var json = consumo.obterDados(endereco);
@@ -41,10 +41,17 @@ public class Principal {
                 .sorted(Comparator.comparing(Dados::codigo))
                 .forEach(System.out::println);
 
+        System.out.println("Informe o código da marca para consulta:");
+        var codigoMarca = leitura.nextLine();
+        endereco = endereco + codigoMarca + "/modelos";
+        json = consumo.obterDados(endereco);
 
-//        String jsonFormatado = json.replace("[", "").replace("]", "");
-//        DadosMarcas dados = conversor.obterDados(jsonFormatado, DadosMarcas.class);
-//        System.out.println(dados);
+        //ERRO O CODIGO NAO MODELOS NAO EH STRING... SIM NUMERICO
+        var modelos = conversor.obterLista(json, Dados.class);
+        modelos.stream()
+                .sorted(Comparator.comparing(Dados::codigo))
+                .forEach(System.out::println);
+
 
 //		for(int i = 1; i <= jsonFormatado.length(); i++){
 //			DadosMarcas listaMarcas = conversor.obterDados(jsonFormatado, DadosMarcas.class);
