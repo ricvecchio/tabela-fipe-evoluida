@@ -46,7 +46,6 @@ public class Principal {
 //        DadosMarcas dados = conversor.obterDados(jsonFormatado, DadosMarcas.class);
 //        System.out.println(dados);
 
-
 //		for(int i = 1; i <= jsonFormatado.length(); i++){
 //			DadosMarcas listaMarcas = conversor.obterDados(jsonFormatado, DadosMarcas.class);
 //			System.out.println(listaMarcas);
