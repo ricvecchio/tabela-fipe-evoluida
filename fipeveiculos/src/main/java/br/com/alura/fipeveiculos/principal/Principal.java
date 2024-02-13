@@ -21,9 +21,9 @@ public class Principal {
                Moto
                Caminhão
                
-               Digite uma das opções para consultar valores:
-                """;
+               Digite uma das opções para consultar valores: """;
         System.out.println(menu);
+
         var tipoVeiculo = leitura.nextLine();
         String endereco;
 
@@ -45,8 +45,12 @@ public class Principal {
         var codigoMarca = leitura.nextLine();
         endereco = endereco + codigoMarca + "/modelos";
         json = consumo.obterDados(endereco);
+//        System.out.println(json);
 
-        //ERRO O CODIGO NAO MODELOS NAO EH STRING... SIM NUMERICO
+        //erro... modelos traz cabeçalho tbm junto
+        endereco = "https://parallelum.com.br/fipe/api/v1/carros/marcas/59/modelos/5940/anos";
+        json = consumo.obterDados(endereco);
+
         var modelos = conversor.obterLista(json, Dados.class);
         modelos.stream()
                 .sorted(Comparator.comparing(Dados::codigo))
