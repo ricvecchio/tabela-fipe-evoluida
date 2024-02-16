@@ -25,19 +25,10 @@ public class ConsumoApi {
         String json = response.body();
 
         if (response.statusCode() == 200) {
-            System.out.println("\nValor do JSON de retorno 200: " + json);
             return json;
         } else {
             json = null;
-            System.out.println("\nValor do JSON de retorno 400: " + json);
             return json;
         }
-
-
-//        String json = response.body();
-//        return json;
-
-//        String status = String.valueOf(response.statusCode());
-//        return json + status;
     }
 }

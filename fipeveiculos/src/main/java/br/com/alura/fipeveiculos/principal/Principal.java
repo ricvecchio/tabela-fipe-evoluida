@@ -22,20 +22,20 @@ public class Principal {
     public void exibeMenu() {
 
         var menu = """
-               **** OPÇÕES ****
-               Carro
-               Moto
-               Caminhão
+                 \n**** OPÇÕES ****
+                Carro
+                Moto
+                Caminhão
 
-               Digite uma das opções para consultar valores: """;
+                Digite uma das opções para consultar valores: """;
         System.out.println(menu);
 
         var tipoVeiculo = leitura.nextLine();
         String endereco;
 
-        if (tipoVeiculo.toLowerCase().contains("carr")) {
+        if (tipoVeiculo.toLowerCase().contains("car")) {
             endereco = URL_BASE + "carros/marcas/";
-        }    else if (tipoVeiculo.toLowerCase().contains("mot")) {
+        }    else if (tipoVeiculo.toLowerCase().contains("mo")) {
             endereco = URL_BASE + "motos/marcas/";
         }    else {
             endereco = URL_BASE + "caminhoes/marcas/";
@@ -49,33 +49,26 @@ public class Principal {
 /*
         Recebe o código da marca digitado e efetua uma busca dos modelos de véiculos ordenando pelo código.
 */
-//        System.out.println("\nInforme o código da marca para consulta:");
-//        var codigoMarca = leitura.nextLine();
-//        endereco = endereco + codigoMarca + "/modelos";
-//        json = consumo.obterDados(endereco);
-
         String enderecoBase;
         enderecoBase = endereco;
         json = null;
         while (json == null) {
             System.out.println("\nInforme o código da marca para consulta ou (S) para Encerrar:");
             var codigoMarca = leitura.nextLine();
-            if(codigoMarca.contains("S")){
+            if(codigoMarca.equalsIgnoreCase("S")){
                 System.out.println("\n*** Aplicação Encerrada ***");
                 return;
             } else {
-//                endereco = endereco + codigoMarca + "/modelos";
-                endereco = endereco.concat(codigoMarca).concat("/modelos");
+                endereco = endereco.concat(codigoMarca).concat("/modelos/");
                 json = consumo.obterDados(endereco);
                 if (json == null) {
-                    System.out.println("\nCódigo não encontrado ou inválido.");
+                    System.out.println("\nCódigo não encontrado.");
                     endereco = enderecoBase;
                 } else {
                     break;
                 }
             }
         }
-
         var modeloLista = conversor.obterDados(json, Modelos.class);
         modeloLista.modelos().stream()
                 .sorted(Comparator.comparing(Dados::codigo))
@@ -83,20 +76,49 @@ public class Principal {
 /*
         Efetua uma busca do veículo pelo trecho digitado e cria uma nova lista.
 */
-        System.out.println("\nDigite um trecho do nome do veículo para consulta:");
-        var nomeVeiculo = leitura.nextLine();
-        List<Dados> modelosFiltrados = modeloLista.modelos().stream()
-                .filter(m -> m.nome().toLowerCase().contains(nomeVeiculo.toLowerCase()))
-                .collect(Collectors.toList());
-        System.out.println("\nModelos Filtrados");
-        modelosFiltrados.forEach(System.out::println);
+        json = null;
+        while (json == null) {
+            System.out.println("\nDigite um trecho do veículo para consulta ou (S) para Encerrar:");
+            var nomeVeiculo = leitura.nextLine();
+            if(nomeVeiculo.equalsIgnoreCase("S")){
+                System.out.println("\n*** Aplicação Encerrada ***");
+                return;
+            } else {
+                List<Dados> modelosFiltrados = modeloLista.modelos().stream()
+                        .filter(m -> m.nome().toLowerCase().contains(nomeVeiculo.toLowerCase()))
+                        .collect(Collectors.toList());
+                        long tCount = modelosFiltrados.stream().count();
+                if (tCount == 0) {
+                    System.out.println("\nNenhum veículo encontrado com o trecho informado.");
+                } else {
+                    System.out.println("\nModelos Filtrados:\n");
+                    modelosFiltrados.forEach(System.out::println);
+                    break;
+                }
+            }
+        }
 /*
         Efetua uma busca da lista de anos disponíveis para o código do veiculo selecionado.
 */
-        System.out.println("\nDigite o código do modelo para buscar os valores de avaliação:");
-        var codigoModelo = leitura.nextLine();
-        endereco = endereco + "/" + codigoModelo + "/anos";
-        json = consumo.obterDados(endereco);
+        enderecoBase = endereco;
+        json = null;
+        while (json == null) {
+            System.out.println("\nDigite o código do modelo para buscar os valores de avaliação:");
+            var codigoModelo = leitura.nextLine();
+            if(codigoModelo.equalsIgnoreCase("S")){
+                System.out.println("\n*** Aplicação Encerrada ***");
+                return;
+            } else {
+                endereco = endereco + codigoModelo + "/anos";
+                json = consumo.obterDados(endereco);
+                if (json == null) {
+                    System.out.println("\nCódigo não encontrado.");
+                    endereco = enderecoBase;
+                } else {
+                    break;
+                }
+            }
+        }
         List<Dados> anos = conversor.obterLista(json, Dados.class);
 /*
         Cria uma nova lista de veículos, incrementando com os dados dos anos disponíveis.
@@ -108,7 +130,7 @@ public class Principal {
             Veiculo veiculo = conversor.obterDados(json, Veiculo.class);
             veiculos.add(veiculo);
             }
-        System.out.println("\nTodos os veículos filtrados com avaliações por ano: ");
+        System.out.println("\nTodos os veículos filtrados com avaliações por ano: \n");
         veiculos.forEach(System.out::println);
 
     }
