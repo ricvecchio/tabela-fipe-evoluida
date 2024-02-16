@@ -49,10 +49,33 @@ public class Principal {
 /*
         Recebe o código da marca digitado e efetua uma busca dos modelos de véiculos ordenando pelo código.
 */
-        System.out.println("\nInforme o código da marca para consulta:");
-        var codigoMarca = leitura.nextLine();
-        endereco = endereco + codigoMarca + "/modelos";
-        json = consumo.obterDados(endereco);
+//        System.out.println("\nInforme o código da marca para consulta:");
+//        var codigoMarca = leitura.nextLine();
+//        endereco = endereco + codigoMarca + "/modelos";
+//        json = consumo.obterDados(endereco);
+
+        String enderecoBase;
+        enderecoBase = endereco;
+        json = null;
+        while (json == null) {
+            System.out.println("\nInforme o código da marca para consulta ou (S) para Encerrar:");
+            var codigoMarca = leitura.nextLine();
+            if(codigoMarca.contains("S")){
+                System.out.println("\n*** Aplicação Encerrada ***");
+                return;
+            } else {
+//                endereco = endereco + codigoMarca + "/modelos";
+                endereco = endereco.concat(codigoMarca).concat("/modelos");
+                json = consumo.obterDados(endereco);
+                if (json == null) {
+                    System.out.println("\nCódigo não encontrado ou inválido.");
+                    endereco = enderecoBase;
+                } else {
+                    break;
+                }
+            }
+        }
+
         var modeloLista = conversor.obterDados(json, Modelos.class);
         modeloLista.modelos().stream()
                 .sorted(Comparator.comparing(Dados::codigo))
@@ -115,6 +138,8 @@ public class Principal {
           (t -> t.episodios()     ==> Para cada temporada(t), percorrer a lista dos episódios.
           .forEach(e ->  System.out.println(e.titulo) ==> Ler todos os episódios e imprimir o título de cada um.
 
+          *** Essa função peek (espiada), mostra o que a função anterior executou, a forma por traz do lambda.
+          .peek(e -> System.out.println("Primeiro filtro(N/A) " +  e))
 
       *** Imprimindo todas as temporadas usando lambda (ambos estão fazendo a mesma coisa abaixo):
         temporadas.forEach(t -> System.out.println(t));
