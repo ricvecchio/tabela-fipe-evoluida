@@ -34,6 +34,7 @@ public class Principal {
                     5 - Buscar veiculos por trecho
                     6 - Buscar veiculos por categoria
                     7 - Buscar informações de um véiculo pelo nome
+                    8 - Buscar informações da Marca de véiculo
                                     
                     0 - Sair                     """;
             System.out.println(menu);
@@ -55,6 +56,9 @@ public class Principal {
                     break;
                 case 7:
                     buscarVeiculoChatGPT();
+                    break;
+                case 8:
+                    buscarMarcaChatGPT();
                     break;
                 case 0:
                     System.out.println("Saindo...");
@@ -162,8 +166,17 @@ public class Principal {
     private void buscarVeiculoChatGPT() {
         System.out.println("Digite o nome do veículo para buscar as informações na IA: ");
         var veiculo = leitura.nextLine();
-        var infoVeiculo = ConsultaChatGPT.obterTraducao(veiculo).trim();
-        System.out.println(infoVeiculo);
+        String textoIA = "Em um único paragrafo fale da Marca de veículo: " + veiculo;
+        var infoVeiculoIA = ConsultaChatGPT.obterDadosIA(textoIA).trim();
+        System.out.println(infoVeiculoIA);
+    }
+
+    private void buscarMarcaChatGPT() {
+        System.out.println("Digite a Marca de veículo para buscar as informações na IA: ");
+        var marca = leitura.nextLine();
+        String textoIA = "Em um único paragrafo fale da Marca de veículo: " + marca;
+        var infoMarcaIA = ConsultaChatGPT.obterDadosIA(textoIA).trim();
+        System.out.println(infoMarcaIA);
     }
 }
 

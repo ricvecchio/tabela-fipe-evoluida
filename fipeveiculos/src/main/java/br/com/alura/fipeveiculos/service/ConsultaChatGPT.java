@@ -4,12 +4,13 @@ import com.theokanning.openai.completion.CompletionRequest;
 import com.theokanning.openai.service.OpenAiService;
 
 public class ConsultaChatGPT {
-    public static String obterTraducao(String veiculo) {
+    public static String obterDadosIA(String dados) {
         OpenAiService service = new OpenAiService(System.getenv("OPENAI_APIKEY"));
 
         CompletionRequest requisicao = CompletionRequest.builder()
                 .model("gpt-3.5-turbo-instruct")
-                .prompt("Resumo do veículo: " + veiculo)
+//                .prompt("Em um único paragrafo fale do veículo: " + veiculo)
+                .prompt(dados)
                 .maxTokens(1000)
                 .temperature(0.7)
                 .build();
