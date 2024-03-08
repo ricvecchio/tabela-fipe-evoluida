@@ -9,7 +9,6 @@ public class ConsultaChatGPT {
 
         CompletionRequest requisicao = CompletionRequest.builder()
                 .model("gpt-3.5-turbo-instruct")
-//                .prompt("Em um único paragrafo fale do veículo: " + veiculo)
                 .prompt(dados)
                 .maxTokens(1000)
                 .temperature(0.7)
