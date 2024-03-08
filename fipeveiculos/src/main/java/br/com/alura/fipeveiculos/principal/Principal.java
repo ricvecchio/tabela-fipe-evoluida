@@ -33,8 +33,8 @@ public class Principal {
                     4 - Listar veículos buscados
                     5 - Buscar veiculos por trecho
                     6 - Buscar veiculos por categoria
-                    7 - Buscar informações de um véiculo pelo nome
-                    8 - Buscar informações da Marca de véiculo
+                    7 - Buscar informações de um véiculo pelo nome (IA)
+                    8 - Buscar informações da Marca de véiculo (IA)
                                     
                     0 - Sair                     """;
             System.out.println(menu);
