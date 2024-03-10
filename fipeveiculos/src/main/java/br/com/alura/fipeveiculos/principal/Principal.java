@@ -1,6 +1,7 @@
 package br.com.alura.fipeveiculos.principal;
 
 import br.com.alura.fipeveiculos.model.Dados;
+import br.com.alura.fipeveiculos.model.DadosMarca;
 import br.com.alura.fipeveiculos.model.DadosVeiculo;
 import br.com.alura.fipeveiculos.model.Modelos;
 import br.com.alura.fipeveiculos.service.ConsultaChatGPT;
@@ -19,6 +20,7 @@ public class Principal {
     private ConsumoApi consumo = new ConsumoApi();
     private ConverteDados conversor = new ConverteDados();
     private final String URL_BASE = "https://parallelum.com.br/fipe/api/v1/";
+    private List<List<DadosMarca>> dadosMarcas = new ArrayList<List<DadosMarca>>();
     String endereco;
 
     public void exibeMenu() {
@@ -27,14 +29,16 @@ public class Principal {
             var menu = """
                      \n**** TABELA FIPE ****
                      
-                    1 - Buscar Carros
-                    2 - Buscar Motos
-                    3 - Buscar Caminhões
+                    1 - Buscar valores de Carros
+                    2 - Buscar valores de Motos
+                    3 - Buscar valores de Caminhões
                     4 - Listar veículos buscados
                     5 - Buscar veiculos por trecho
                     6 - Buscar veiculos por categoria
                     7 - Buscar informações de um véiculo pelo nome (IA)
                     8 - Buscar informações da Marca de véiculo (IA)
+                    9 - Buscar Marcas de Veículos
+                    10 - Buscar Marcas de Veículos Salvas
                                     
                     0 - Sair                     """;
             System.out.println(menu);
@@ -60,6 +64,13 @@ public class Principal {
                 case 8:
                     buscarMarcaChatGPT();
                     break;
+                case 9:
+                    endereco = URL_BASE + "carros/marcas/";
+                    buscarMarcasWeb();
+                    break;
+                case 10:
+                    consultaDadosMarcasSalvo();
+                    break;
                 case 0:
                     System.out.println("Saindo...");
                     break;
@@ -69,9 +80,32 @@ public class Principal {
         }
     }
 
+    private void consultaDadosMarcasSalvo() {
+//        List<DadosMarca> marcas = new ArrayList<>();
+//        marcas = dadosMarcas.stream()
+//                        .map(d -> new DadosMarca(d))
+//                        .collect(Collectors.toList());
+//        marcas.stream()
+//                .sorted(Comparator.comparing(DadosMarca::getCodigo))
+//                .forEach(System.out::println);
+        dadosMarcas.forEach(System.out::println);
+//
+    }
+
+    private void buscarMarcasWeb() {
+        var json = consumo.obterDados(endereco);
+        List<DadosMarca> marcas = conversor.obterLista(json, DadosMarca.class);
+        dadosMarcas.add(marcas);
+        System.out.println("teste 1 = " + marcas);
+
+//        var infoMarcaIA = ConsultaChatGPT.obterDadosIA(textoIA).trim();
+//        System.out.println(infoMarcaIA);
+    }
+
     private void buscarVeiculoWeb() {
         var json = consumo.obterDados(endereco);
         var marcas = conversor.obterLista(json, Dados.class);
+        System.out.println("Teste funcionando = " + marcas);
         marcas.stream()
                 .sorted(Comparator.comparing(Dados::codigo))
                 .forEach(System.out::println);
