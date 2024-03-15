@@ -3,6 +3,7 @@ package br.com.alura.fipeveiculos.model;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import org.springframework.data.jpa.repository.Modifying;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +19,7 @@ public class DadosMarca {
     @Column(name = "Marca")
     @JsonAlias("nome") private String marca;
 
+//    @Modifying(clearAutomatically = true)
     private String detalheIa;
 
     @Transient

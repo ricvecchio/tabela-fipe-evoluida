@@ -10,10 +10,7 @@ import br.com.alura.fipeveiculos.service.ConsumoApi;
 import br.com.alura.fipeveiculos.service.ConverteDados;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Principal {
@@ -25,6 +22,8 @@ public class Principal {
     private List<List<DadosMarca>> dadosMarcas = new ArrayList<List<DadosMarca>>();
 
     private MarcaRepository repositorio;
+
+    private Optional<DadosMarca> marcaBusca;
     String endereco;
 
     public Principal(MarcaRepository repositorio) {
@@ -43,10 +42,11 @@ public class Principal {
                     4 - Listar veículos buscados
                     5 - Buscar veiculos por trecho
                     6 - Buscar veiculos por categoria
-                    7 - Buscar informações de um véiculo pelo nome (IA)
-                    8 - Buscar informações da Marca de véiculo (IA)
+                    7 - Buscar informações de um véiculo pelo nome no ChatGPT
+                    8 - Buscar informações da Marca de véiculo no ChatGPT
                     9 - Buscar Marcas de Veículos
                     10 - Buscar Marcas de Veículos Salvas
+                    11 - Buscar Detalhe da Marca no ChatGPT
                                     
                     0 - Sair                     """;
             System.out.println(menu);
@@ -79,12 +79,33 @@ public class Principal {
                 case 10:
                     consultaDadosMarcasSalvo();
                     break;
+                case 11:
+                    buscarDetalheMarcaChatGPT();
+                    break;
                 case 0:
                     System.out.println("Saindo...");
                     break;
                 default:
                     System.out.println("Opção inválida");
             }
+        }
+    }
+
+    private void buscarDetalheMarcaChatGPT() {
+        System.out.println("Digite a marca do veículo para buscar detalhes: ");
+        var marca = leitura.nextLine();
+        String textoIA = "Ano e país da marca " + marca;
+        var detalheMarca = ConsultaChatGPT.obterDadosIA(textoIA).trim();
+        System.out.println(detalheMarca);
+
+        marcaBusca = repositorio.findByMarcaContainingIgnoreCase(marca);
+//        repositorio.updateBy
+
+        if (marcaBusca.isPresent()) {
+            System.out.println("Dados da Marca: " + marcaBusca);
+//            repositorio.save(listaMarcas);
+        } else {
+            System.out.println("Marca não encontrada!");
         }
     }
 
@@ -100,12 +121,9 @@ public class Principal {
         List<DadosMarca> marcas = conversor.obterLista(json, DadosMarca.class);
 
         for(DadosMarca listaMarcas : marcas) {
-
-            String textoIA = "Ano e país da marca " + listaMarcas.getMarca();
-            listaMarcas.setDetalheIa(ConsultaChatGPT.obterDadosIA(textoIA).trim());
-
+//            String textoIA = "Ano e país da marca " + listaMarcas.getMarca();
+//            listaMarcas.setDetalheIa(ConsultaChatGPT.obterDadosIA(textoIA).trim());
             repositorio.save(listaMarcas);
-            System.out.println("RETIRAR = " + listaMarcas);
         }
     }
 
