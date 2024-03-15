@@ -4,9 +4,11 @@ import br.com.alura.fipeveiculos.model.Dados;
 import br.com.alura.fipeveiculos.model.DadosMarca;
 import br.com.alura.fipeveiculos.model.DadosVeiculo;
 import br.com.alura.fipeveiculos.model.Modelos;
+import br.com.alura.fipeveiculos.repository.MarcaRepository;
 import br.com.alura.fipeveiculos.service.ConsultaChatGPT;
 import br.com.alura.fipeveiculos.service.ConsumoApi;
 import br.com.alura.fipeveiculos.service.ConverteDados;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -21,7 +23,13 @@ public class Principal {
     private ConverteDados conversor = new ConverteDados();
     private final String URL_BASE = "https://parallelum.com.br/fipe/api/v1/";
     private List<List<DadosMarca>> dadosMarcas = new ArrayList<List<DadosMarca>>();
+
+    private MarcaRepository repositorio;
     String endereco;
+
+    public Principal(MarcaRepository repositorio) {
+        this.repositorio = repositorio;
+    }
 
     public void exibeMenu() {
         var opcao = -1;
@@ -81,25 +89,26 @@ public class Principal {
     }
 
     private void consultaDadosMarcasSalvo() {
-//        List<DadosMarca> marcas = new ArrayList<>();
-//        marcas = dadosMarcas.stream()
-//                        .map(d -> new DadosMarca(d))
-//                        .collect(Collectors.toList());
-//        marcas.stream()
-//                .sorted(Comparator.comparing(DadosMarca::getCodigo))
-//                .forEach(System.out::println);
-        dadosMarcas.forEach(System.out::println);
-//
+        List<DadosMarca> marcas = repositorio.findAll();
+        marcas.stream()
+                .sorted(Comparator.comparing(DadosMarca::getId))
+                .forEach(System.out::println);
     }
 
     private void buscarMarcasWeb() {
         var json = consumo.obterDados(endereco);
         List<DadosMarca> marcas = conversor.obterLista(json, DadosMarca.class);
-        dadosMarcas.add(marcas);
-        System.out.println("teste 1 = " + marcas);
 
-//        var infoMarcaIA = ConsultaChatGPT.obterDadosIA(textoIA).trim();
-//        System.out.println(infoMarcaIA);
+        for(DadosMarca listaMarcas : marcas) {
+
+            listaMarcas.setSegmento("carro");
+
+            String textoIA = "Ano e pais da marca " + listaMarcas.getMarca();
+            listaMarcas.setDetalheIa(ConsultaChatGPT.obterDadosIA(textoIA).trim());
+
+            repositorio.save(listaMarcas);
+            System.out.println("RETIRAR = " + listaMarcas);
+        }
     }
 
     private void buscarVeiculoWeb() {
