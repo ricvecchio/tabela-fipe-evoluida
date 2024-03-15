@@ -101,9 +101,7 @@ public class Principal {
 
         for(DadosMarca listaMarcas : marcas) {
 
-            listaMarcas.setSegmento("carro");
-
-            String textoIA = "Ano e pais da marca " + listaMarcas.getMarca();
+            String textoIA = "Ano e país da marca " + listaMarcas.getMarca();
             listaMarcas.setDetalheIa(ConsultaChatGPT.obterDadosIA(textoIA).trim());
 
             repositorio.save(listaMarcas);

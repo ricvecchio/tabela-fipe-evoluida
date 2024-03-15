@@ -17,8 +17,7 @@ public class DadosMarca {
     private String codigo;
     @Column(name = "Marca")
     @JsonAlias("nome") private String marca;
-//    @Enumerated(EnumType.STRING)
-    private String segmento;
+
     private String detalheIa;
 
     @Transient
@@ -27,7 +26,6 @@ public class DadosMarca {
 //    public DadosMarca(Dados dados){
 //        this.codigo = dados.codigo();
 //        this.marca = dados.nome();
-//        this.segmento = "carro";
 //        this.detalheIA = "Data retornada da IA";
 //    }
 
@@ -55,14 +53,6 @@ public class DadosMarca {
         this.marca = marca;
     }
 
-    public String getSegmento() {
-        return segmento;
-    }
-
-    public void setSegmento(String segmento) {
-        this.segmento = segmento;
-    }
-
     public String getDetalheIa() {
         return detalheIa;
     }
@@ -86,7 +76,6 @@ public class DadosMarca {
         return "ID = " + id +
                 " Código = " + codigo +
                 ", Marca = " + marca +
-                ", Segmento = " + segmento +
                 ", Detalhe = " + detalheIa;
     }
 }
