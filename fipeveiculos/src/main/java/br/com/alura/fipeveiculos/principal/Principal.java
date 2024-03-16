@@ -9,6 +9,7 @@ import br.com.alura.fipeveiculos.service.ConsultaChatGPT;
 import br.com.alura.fipeveiculos.service.ConsumoApi;
 import br.com.alura.fipeveiculos.service.ConverteDados;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -19,13 +20,16 @@ public class Principal {
     private ConsumoApi consumo = new ConsumoApi();
     private ConverteDados conversor = new ConverteDados();
     private final String URL_BASE = "https://parallelum.com.br/fipe/api/v1/";
-    private List<List<DadosMarca>> dadosMarcas = new ArrayList<List<DadosMarca>>();
 
     private MarcaRepository repositorio;
 
-    private Optional<DadosMarca> marcaBusca;
-    String endereco;
+    private DadosMarca marcaBusca;
+//    private Optional<DadosMarca> marcaBusca;
 
+    String endereco;
+    Long id;
+    String segmento;
+    String detalheMarca;
     public Principal(MarcaRepository repositorio) {
         this.repositorio = repositorio;
     }
@@ -73,7 +77,7 @@ public class Principal {
                     buscarMarcaChatGPT();
                     break;
                 case 9:
-                    endereco = URL_BASE + "carros/marcas/";
+                    endereco = URL_BASE + "caminhoes/marcas/";
                     buscarMarcasWeb();
                     break;
                 case 10:
@@ -95,18 +99,32 @@ public class Principal {
         System.out.println("Digite a marca do veículo para buscar detalhes: ");
         var marca = leitura.nextLine();
         String textoIA = "Ano e país da marca " + marca;
-        var detalheMarca = ConsultaChatGPT.obterDadosIA(textoIA).trim();
+        detalheMarca = ConsultaChatGPT.obterDadosIA(textoIA).trim();
         System.out.println(detalheMarca);
 
-        marcaBusca = repositorio.findByMarcaContainingIgnoreCase(marca);
-//        repositorio.updateBy
+        DadosMarca marcaBusca = repositorio.findByMarcaContainingIgnoreCase(marca);
+        id = marcaBusca.getId();
 
-        if (marcaBusca.isPresent()) {
-            System.out.println("Dados da Marca: " + marcaBusca);
-//            repositorio.save(listaMarcas);
-        } else {
-            System.out.println("Marca não encontrada!");
-        }
+        System.out.println("Dados da Marca: " + marcaBusca);
+        updateDetalheIa_ShouldUpdateDetalheIa();
+
+
+
+
+//        marcaBusca = repositorio.findByMarcaContainingIgnoreCase(marca);
+//
+//        if (marcaBusca.isPresent()) {
+//            System.out.println("Dados da Marca: " + marcaBusca);
+//            updateDetalheIa_ShouldUpdateDetalheIa();
+//        } else {
+//            System.out.println("Marca não encontrada!");
+//        }
+    }
+
+    public void updateDetalheIa_ShouldUpdateDetalheIa() {
+        System.out.println("valor ID = " + id);
+        System.out.println("valor detalheIa = " + detalheMarca);
+        repositorio.updateDetalheIa(id, detalheMarca);
     }
 
     private void consultaDadosMarcasSalvo() {
@@ -119,11 +137,13 @@ public class Principal {
     private void buscarMarcasWeb() {
         var json = consumo.obterDados(endereco);
         List<DadosMarca> marcas = conversor.obterLista(json, DadosMarca.class);
-
         for(DadosMarca listaMarcas : marcas) {
-//            String textoIA = "Ano e país da marca " + listaMarcas.getMarca();
-//            listaMarcas.setDetalheIa(ConsultaChatGPT.obterDadosIA(textoIA).trim());
-            repositorio.save(listaMarcas);
+            listaMarcas.setSegmento("caminhoes");
+            try {
+                repositorio.save(listaMarcas);
+            } catch (DataIntegrityViolationException ex) {
+                System.out.println("Marca ja existente no banco de dados: " + listaMarcas);
+            }
         }
     }
 

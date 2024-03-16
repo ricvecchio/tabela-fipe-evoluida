@@ -18,18 +18,11 @@ public class DadosMarca {
     private String codigo;
     @Column(name = "Marca")
     @JsonAlias("nome") private String marca;
-
-//    @Modifying(clearAutomatically = true)
     private String detalheIa;
+    private String segmento;
 
     @Transient
     private List<Veiculo> veiculos = new ArrayList<>();
-
-//    public DadosMarca(Dados dados){
-//        this.codigo = dados.codigo();
-//        this.marca = dados.nome();
-//        this.detalheIA = "Data retornada da IA";
-//    }
 
     public Long getId() {
         return id;
@@ -55,6 +48,14 @@ public class DadosMarca {
         this.marca = marca;
     }
 
+    public String getSegmento() {
+        return segmento;
+    }
+
+    public void setSegmento(String segmento) {
+        this.segmento = segmento;
+    }
+
     public String getDetalheIa() {
         return detalheIa;
     }
@@ -62,8 +63,6 @@ public class DadosMarca {
     public void setDetalheIa(String detalheIa) {
         this.detalheIa = detalheIa;
     }
-
-
 
     public List<Veiculo> getVeiculos() {
         return veiculos;
@@ -78,6 +77,7 @@ public class DadosMarca {
         return "ID = " + id +
                 " Código = " + codigo +
                 ", Marca = " + marca +
+                ", Segmento = " + segmento +
                 ", Detalhe = " + detalheIa;
     }
 }
