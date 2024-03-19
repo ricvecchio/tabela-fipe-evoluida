@@ -3,6 +3,7 @@ package br.com.alura.fipeveiculos.model;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.data.jpa.repository.Modifying;
 
 import java.util.ArrayList;
@@ -13,9 +14,12 @@ import java.util.List;
 public class DadosMarca {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @NotNull
     private Long id;
+    @NotNull
     @Column(unique = true)
     private String codigo;
+    @NotNull
     @Column(name = "Marca")
     @JsonAlias("nome") private String marca;
     private String detalheIa;
