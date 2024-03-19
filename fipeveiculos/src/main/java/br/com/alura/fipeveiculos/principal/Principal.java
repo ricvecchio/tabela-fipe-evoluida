@@ -30,6 +30,8 @@ public class Principal {
 //    Long id;
     Long idMarca;
     String detalheMarca;
+    String nomeSegmento;
+
     public Principal(MarcaRepository repositorio) {
         this.repositorio = repositorio;
     }
@@ -47,8 +49,7 @@ public class Principal {
                     5 - Buscar veiculos por trecho
                     6 - Buscar veiculos por categoria
                     7 - Buscar informações de um véiculo pelo nome no ChatGPT
-                    8 - Buscar informações da Marca de véiculo no ChatGPT
-                    9 - Buscar Marcas de Veículos
+                    9 - Buscar Marcas de Veículos Web (fipe.org.br) e Salvar no Banco de Dados 
                     10 - Buscar Marcas de Veículos Salvas
                     11 - Buscar Detalhe da Marca no ChatGPT
                                     
@@ -73,12 +74,8 @@ public class Principal {
                 case 7:
                     buscarVeiculoChatGPT();
                     break;
-                case 8:
-                    buscarMarcaChatGPT();
-                    break;
                 case 9:
-                    endereco = URL_BASE + "caminhoes/marcas/";
-                    buscarMarcasWeb();
+                    buscarMarcasWebESalvarNaTabela();
                     break;
                 case 10:
                     consultaDadosMarcasSalvo();
@@ -128,18 +125,60 @@ public class Principal {
                 .forEach(System.out::println);
     }
 
-    private void buscarMarcasWeb() {
-        var json = consumo.obterDados(endereco);
-        List<DadosMarca> marcas = conversor.obterLista(json, DadosMarca.class);
-        for(DadosMarca listaMarcas : marcas) {
-            listaMarcas.setSegmento("caminhoes");
-            try {
-                repositorio.save(listaMarcas);
-            } catch (DataIntegrityViolationException ex) {
-                System.out.println("Marca ja existente no banco de dados: " + listaMarcas);
+    private void buscarMarcasWebESalvarNaTabela() {
+        var segmento = -1;
+        while (segmento != 0) {
+            var menu = """
+                     \n**** Digite a opção do segmento da Marca ****
+                     
+                    1 - Carros
+                    2 - Motos
+                    3 - Caminhões
+                                    
+                    0 - Sair                     """;
+            System.out.println(menu);
+            segmento = leitura.nextInt();
+            leitura.nextLine();
+            switch (segmento) {
+                case 1:
+                    endereco = URL_BASE + "carros/marcas/";
+                    nomeSegmento = "Carros";
+                    listarMarcasWeb();
+                    break;
+                case 2:
+                    endereco = URL_BASE + "motos/marcas/";
+                    nomeSegmento = "Motos";
+                    listarMarcasWeb();
+                    break;
+                case 3:
+                    endereco = URL_BASE + "caminhoes/marcas/";
+                    nomeSegmento = "Caminhões";
+                    listarMarcasWeb();
+                    break;
+                case 0:
+                    System.out.println("Saindo...");
+                    break;
+                default:
+                    System.out.println("Opção inválida");
             }
         }
     }
+
+    private void listarMarcasWeb() {
+        System.out.println("\nLista das marcas de veículos salvas no banco de dados: \n");
+        var json = consumo.obterDados(endereco);
+        List<DadosMarca> marcas = conversor.obterLista(json, DadosMarca.class);
+        for (DadosMarca listaMarcas : marcas) {
+            try {
+                listaMarcas.setSegmento(nomeSegmento);
+                System.out.println(listaMarcas);
+                repositorio.save(listaMarcas);
+            } catch (DataIntegrityViolationException ex) {
+                System.out.println("\nA marca " + listaMarcas.getMarca() + " já existe no banco de dados.");
+            }
+        }
+    }
+
 
     private void buscarVeiculoWeb() {
         var json = consumo.obterDados(endereco);
@@ -242,14 +281,6 @@ public class Principal {
         String textoIA = "Em um único paragrafo fale da Marca de veículo: " + veiculo;
         var infoVeiculoIA = ConsultaChatGPT.obterDadosIA(textoIA).trim();
         System.out.println(infoVeiculoIA);
-    }
-
-    private void buscarMarcaChatGPT() {
-        System.out.println("Digite a Marca de veículo para buscar as informações na IA: ");
-        var marca = leitura.nextLine();
-        String textoIA = "Em um único paragrafo fale da Marca de veículo: " + marca;
-        var infoMarcaIA = ConsultaChatGPT.obterDadosIA(textoIA).trim();
-        System.out.println(infoMarcaIA);
     }
 }
 
