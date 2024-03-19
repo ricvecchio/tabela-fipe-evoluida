@@ -8,7 +8,6 @@ import br.com.alura.fipeveiculos.repository.MarcaRepository;
 import br.com.alura.fipeveiculos.service.ConsultaChatGPT;
 import br.com.alura.fipeveiculos.service.ConsumoApi;
 import br.com.alura.fipeveiculos.service.ConverteDados;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.*;
@@ -27,7 +26,6 @@ public class Principal {
 //    private Optional<DadosMarca> buscaMarca;
 
     String endereco;
-//    Long id;
     Long idMarca;
     String detalheMarca;
     String nomeSegmento;
@@ -42,17 +40,15 @@ public class Principal {
             var menu = """
                      \n**** TABELA FIPE ****
                      
-                     1 - Buscar valores de Carros no site (fipe.org.br)
-                     2 - Buscar valores de Motos no site (fipe.org.br)
-                     3 - Buscar valores de Caminhões no site (fipe.org.br)
-                     4 - Buscar informações de um véiculo pelo nome no ChatGPT ==============>>> OK
-                     5 - Buscar Marcas no site (fipe.org.br) e Salvar no Banco de Dados =====>>> OK
-                     6 - Listar Marcas Salvas no Banco de Dados =============================>>> OK
-                     7 - Buscar Detalhe da Marca no ChatGPT e Atualizar no Banco de Dados ===>>> OK
-                     8 - Listar veículos buscados
+                     1 - Buscar valores de carros, motos ou caminhões no site (fipe.org.br)
+                     4 - Buscar informações de um veículo pelo nome no ChatGPT ==============>>> OK
+                     5 - Buscar marcas no site (fipe.org.br) e salvar no banco de dados =====>>> OK
+                     6 - Listar marcas salvas no Banco de Dados =============================>>> OK
+                     7 - Buscar detalhe da marca no ChatGPT e atualizar no banco de dados ===>>> OK
+                     8 - Listar veículos salvo no banco de dados
                      9 - Buscar veiculos por trecho
                     10 - Buscar veiculos por categoria
-                    99 - Deletar Banco de Dados  
+                    99 - Deletar banco de dados  
                                     
                     0 - Sair                     """;
             System.out.println(menu);
@@ -61,15 +57,6 @@ public class Principal {
 
             switch (opcao) {
                 case 1:
-                    endereco = URL_BASE + "carros/marcas/";
-                    buscarVeiculoWeb();
-                    break;
-                case 2:
-                    endereco = URL_BASE + "motos/marcas/";
-                    buscarVeiculoWeb();
-                    break;
-                case 3:
-                    endereco = URL_BASE + "caminhoes/marcas/";
                     buscarVeiculoWeb();
                     break;
                 case 4:
@@ -93,79 +80,12 @@ public class Principal {
         }
     }
 
-    private void buscarDetalheMarcaChatGPT() {
-        listarMarcasRepositorio();
-        System.out.println("\nDigite o ID da marca do veículo para buscar detalhes: ");
-        idMarca = Long.valueOf(leitura.nextLine());
 
-        Optional<DadosMarca> buscaMarca = repositorio.findById(Long.valueOf(idMarca));
-
-        if (buscaMarca.isPresent()) {
-            String textoIA = "Ano e país da marca " + buscaMarca.get().getMarca();
-            detalheMarca = ConsultaChatGPT.obterDadosIA(textoIA).trim();
-            updateDetalheIa_ShouldUpdateDetalheIa();
-        } else {
-            System.out.println("ID da Marca não localizado!");
-        }
-    }
-
-    public void listarMarcasRepositorio() {
-        List<DadosMarca> marcas = repositorio.findAll();
-        marcas.stream()
-                .sorted(Comparator.comparing(DadosMarca::getId))
-                .forEach(System.out::println);
-    }
     public void updateDetalheIa_ShouldUpdateDetalheIa() {
         repositorio.updateDetalheIa(idMarca, detalheMarca);
     }
 
-    private void consultaDadosMarcasSalvo() {
-        List<DadosMarca> marcas = repositorio.findAll();
-        marcas.stream()
-                .sorted(Comparator.comparing(DadosMarca::getId))
-                .forEach(System.out::println);
-    }
-
-    private void buscarMarcasWebESalvarNaTabela() {
-        var segmento = -1;
-        while (segmento != 0) {
-            var menu = """
-                     \n**** Digite a opção do segmento da Marca ****
-                     
-                    1 - Carros
-                    2 - Motos
-                    3 - Caminhões
-                                    
-                    0 - Sair                     """;
-            System.out.println(menu);
-            segmento = leitura.nextInt();
-            leitura.nextLine();
-            switch (segmento) {
-                case 1:
-                    endereco = URL_BASE + "carros/marcas/";
-                    nomeSegmento = "Carros";
-                    listarMarcasWeb();
-                    break;
-                case 2:
-                    endereco = URL_BASE + "motos/marcas/";
-                    nomeSegmento = "Motos";
-                    listarMarcasWeb();
-                    break;
-                case 3:
-                    endereco = URL_BASE + "caminhoes/marcas/";
-                    nomeSegmento = "Caminhões";
-                    listarMarcasWeb();
-                    break;
-                case 0:
-                    System.out.println("Saindo...");
-                    break;
-                default:
-                    System.out.println("Opção inválida");
-            }
-        }
-    }
-
-    private void listarMarcasWeb() {
+    private void listarESalvarMarcasWeb() {
         System.out.println("\nLista das marcas de veículos salvas no banco de dados: \n");
         var json = consumo.obterDados(endereco);
         List<DadosMarca> marcas = conversor.obterLista(json, DadosMarca.class);
@@ -180,8 +100,8 @@ public class Principal {
         }
     }
 
-
     private void buscarVeiculoWeb() {
+        exibeMenuSegmento();
         var json = consumo.obterDados(endereco);
         var marcas = conversor.obterLista(json, Dados.class);
         System.out.println("Teste funcionando = " + marcas);
@@ -283,7 +203,80 @@ public class Principal {
         var infoVeiculoIA = ConsultaChatGPT.obterDadosIA(textoIA).trim();
         System.out.println(infoVeiculoIA);
     }
+
+    private void buscarMarcasWebESalvarNaTabela() {
+        exibeMenuSegmento();
+        listarESalvarMarcasWeb();
+    }
+
+    private void consultaDadosMarcasSalvo() {
+        List<DadosMarca> marcas = repositorio.findAll();
+        marcas.stream()
+                .sorted(Comparator.comparing(DadosMarca::getId))
+                .forEach(System.out::println);
+    }
+
+    private void buscarDetalheMarcaChatGPT() {
+        listarMarcasRepositorio();
+        System.out.println("\nDigite o ID da marca do veículo para buscar detalhes: ");
+        idMarca = Long.valueOf(leitura.nextLine());
+
+        Optional<DadosMarca> buscaMarca = repositorio.findById(Long.valueOf(idMarca));
+
+        if (buscaMarca.isPresent()) {
+            String textoIA = "Ano e país da marca " + buscaMarca.get().getMarca();
+            detalheMarca = ConsultaChatGPT.obterDadosIA(textoIA).trim();
+            updateDetalheIa_ShouldUpdateDetalheIa();
+        } else {
+            System.out.println("ID da Marca não localizado!");
+        }
+    }
+
+    public void listarMarcasRepositorio() {
+        List<DadosMarca> marcas = repositorio.findAll();
+        marcas.stream()
+                .sorted(Comparator.comparing(DadosMarca::getId))
+                .forEach(System.out::println);
+    }
+
+    private void exibeMenuSegmento() {
+        var segmento = -1;
+        while (segmento != 0) {
+            var menu = """
+                     \n**** Digite a opção do segmento da Marca ****
+                     
+                    1 - Carros
+                    2 - Motos
+                    3 - Caminhões
+                                    
+                    0 - Sair                     """;
+            System.out.println(menu);
+            segmento = leitura.nextInt();
+            leitura.nextLine();
+            switch (segmento) {
+                case 1:
+                    endereco = URL_BASE + "carros/marcas/";
+                    nomeSegmento = "Carros";
+                    return;
+                case 2:
+                    endereco = URL_BASE + "motos/marcas/";
+                    nomeSegmento = "Motos";
+                    return;
+                case 3:
+                    endereco = URL_BASE + "caminhoes/marcas/";
+                    nomeSegmento = "Caminhões";
+                    return;
+                case 0:
+                    System.out.println("Saindo...");
+                    return;
+                default:
+                    System.out.println("Opção inválida");
+                    break;
+            }
+        }
+    }
 }
+
 
 
 
