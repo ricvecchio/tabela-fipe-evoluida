@@ -37,11 +37,11 @@ public class Principal {
             var menu = """
                      \n**** TABELA FIPE ****
                      
-                     1 - Buscar valores de carros, motos ou caminhões no site (fipe.org.br)
-                     4 - Buscar informações de um veículo pelo nome no ChatGPT ==============>>> OK
-                     5 - Buscar marcas no site (fipe.org.br) e salvar no banco de dados =====>>> OK
-                     6 - Listar marcas salvas no Banco de Dados =============================>>> OK
-                     7 - Buscar detalhe da marca no ChatGPT e atualizar no banco de dados ===>>> OK
+                     1 - Buscar valores de carros, motos ou caminhões no site (fipe.org.br) =>>> OK
+                     2 - Buscar informações de um veículo pelo nome no ChatGPT ==============>>> OK
+                     3 - Buscar marcas no site (fipe.org.br) e salvar no banco de dados =====>>> OK
+                     4 - Listar marcas salvas no Banco de Dados =============================>>> OK
+                     5 - Buscar detalhe da marca no ChatGPT e atualizar no banco de dados ===>>> OK
                      8 - Listar veículos salvo no banco de dados
                      9 - Buscar veiculos por trecho
                     10 - Buscar veiculos por categoria
@@ -56,16 +56,16 @@ public class Principal {
                 case 1:
                     buscarVeiculoWeb();
                     break;
-                case 4:
+                case 2:
                     buscarVeiculoChatGPT();
                     break;
-                case 5:
+                case 3:
                     buscarMarcasWebESalvarNaTabela();
                     break;
-                case 6:
+                case 4:
                     consultaDadosMarcasSalvo();
                     break;
-                case 7:
+                case 5:
                     buscarDetalheMarcaChatGPT();
                     break;
                 case 0:
