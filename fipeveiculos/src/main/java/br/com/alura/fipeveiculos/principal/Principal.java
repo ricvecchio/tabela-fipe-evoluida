@@ -27,8 +27,8 @@ public class Principal {
 //    private Optional<DadosMarca> buscaMarca;
 
     String endereco;
-    Long id;
-    String segmento;
+//    Long id;
+    Long idMarca;
     String detalheMarca;
     public Principal(MarcaRepository repositorio) {
         this.repositorio = repositorio;
@@ -96,36 +96,29 @@ public class Principal {
     }
 
     private void buscarDetalheMarcaChatGPT() {
-        System.out.println("Digite a marca do veículo para buscar detalhes: ");
-        var marca = leitura.nextLine();
-        String textoIA = "Ano e país da marca " + marca;
-        detalheMarca = ConsultaChatGPT.obterDadosIA(textoIA).trim();
-        System.out.println(detalheMarca);
+        listarMarcasRepositorio();
+        System.out.println("\nDigite o ID da marca do veículo para buscar detalhes: ");
+        idMarca = Long.valueOf(leitura.nextLine());
 
-//        segmento = "carros";
-        DadosMarca buscaMarca = repositorio.findByMarcaContainingIgnoreCase(marca);
-        System.out.println("Dados da Marca: " + buscaMarca);
-        id = buscaMarca.getId();
+        Optional<DadosMarca> buscaMarca = repositorio.findById(Long.valueOf(idMarca));
 
-        updateDetalheIa_ShouldUpdateDetalheIa();
-
-
-
-
-//        buscaMarca = repositorio.findByMarcaContainingIgnoreCase(marca);
-//
-//        if (buscaMarca.isPresent()) {
-//            System.out.println("Dados da Marca: " + buscaMarca);
-//            updateDetalheIa_ShouldUpdateDetalheIa();
-//        } else {
-//            System.out.println("Marca não encontrada!");
-//        }
+        if (buscaMarca.isPresent()) {
+            String textoIA = "Ano e país da marca " + buscaMarca.get().getMarca();
+            detalheMarca = ConsultaChatGPT.obterDadosIA(textoIA).trim();
+            updateDetalheIa_ShouldUpdateDetalheIa();
+        } else {
+            System.out.println("ID da Marca não localizado!");
+        }
     }
 
+    public void listarMarcasRepositorio() {
+        List<DadosMarca> marcas = repositorio.findAll();
+        marcas.stream()
+                .sorted(Comparator.comparing(DadosMarca::getId))
+                .forEach(System.out::println);
+    }
     public void updateDetalheIa_ShouldUpdateDetalheIa() {
-        System.out.println("valor ID = " + id);
-        System.out.println("valor detalheIa = " + detalheMarca);
-        repositorio.updateDetalheIa(id, detalheMarca);
+        repositorio.updateDetalheIa(idMarca, detalheMarca);
     }
 
     private void consultaDadosMarcasSalvo() {
