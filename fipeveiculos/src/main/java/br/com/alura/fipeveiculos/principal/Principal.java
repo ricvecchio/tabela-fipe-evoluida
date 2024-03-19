@@ -42,16 +42,16 @@ public class Principal {
             var menu = """
                      \n**** TABELA FIPE ****
                      
-                     1 - Buscar valores de Carros
-                     2 - Buscar valores de Motos
-                     3 - Buscar valores de Caminhões
-                     4 - Listar veículos buscados
-                     5 - Buscar veiculos por trecho
-                     6 - Buscar veiculos por categoria
-                     7 - Buscar informações de um véiculo pelo nome no ChatGPT
-                     9 - Buscar Marcas na Web (fipe.org.br) e Salvar no Banco de Dados ===>>> OK
-                    10 - Buscar Marcas de Veículos Salvas ================================>>> OK
-                    11 - Buscar Detalhe da Marca no ChatGPT ==============================>>> OK
+                     1 - Buscar valores de Carros no site (fipe.org.br)
+                     2 - Buscar valores de Motos no site (fipe.org.br)
+                     3 - Buscar valores de Caminhões no site (fipe.org.br)
+                     4 - Buscar informações de um véiculo pelo nome no ChatGPT ==============>>> OK
+                     5 - Buscar Marcas no site (fipe.org.br) e Salvar no Banco de Dados =====>>> OK
+                     6 - Listar Marcas Salvas no Banco de Dados =============================>>> OK
+                     7 - Buscar Detalhe da Marca no ChatGPT e Atualizar no Banco de Dados ===>>> OK
+                     8 - Listar veículos buscados
+                     9 - Buscar veiculos por trecho
+                    10 - Buscar veiculos por categoria
                     99 - Deletar Banco de Dados  
                                     
                     0 - Sair                     """;
@@ -72,16 +72,16 @@ public class Principal {
                     endereco = URL_BASE + "caminhoes/marcas/";
                     buscarVeiculoWeb();
                     break;
-                case 7:
+                case 4:
                     buscarVeiculoChatGPT();
                     break;
-                case 9:
+                case 5:
                     buscarMarcasWebESalvarNaTabela();
                     break;
-                case 10:
+                case 6:
                     consultaDadosMarcasSalvo();
                     break;
-                case 11:
+                case 7:
                     buscarDetalheMarcaChatGPT();
                     break;
                 case 0:
