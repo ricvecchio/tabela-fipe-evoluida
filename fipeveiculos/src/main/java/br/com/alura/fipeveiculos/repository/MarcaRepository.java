@@ -23,5 +23,9 @@ public interface MarcaRepository extends JpaRepository<DadosMarca, Long> {
     @Query("Update DadosMarca SET detalheIa=:detalheIa WHERE id=:id")
     public void updateDetalheIa(@Param("id") Long id, @Param("detalheIa") String detalheIa);
 
+    @Modifying
+    @Transactional
+    @Query("Delete DadosMarca")
+    public void deleteFull();
 
 }

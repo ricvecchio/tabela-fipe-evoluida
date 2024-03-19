@@ -68,6 +68,9 @@ public class Principal {
                 case 5:
                     buscarDetalheMarcaChatGPT();
                     break;
+                case 99:
+                    limparBancoDeDados();
+                    break;
                 case 0:
                     System.out.println("Saindo...");
                     break;
@@ -76,7 +79,6 @@ public class Principal {
             }
         }
     }
-
 
     public void updateDetalheIa_ShouldUpdateDetalheIa() {
         repositorio.updateDetalheIa(idMarca, detalheMarca);
@@ -272,6 +274,10 @@ public class Principal {
                     break;
             }
         }
+    }
+
+    private void limparBancoDeDados() {
+        repositorio.deleteFull();
     }
 }
 
