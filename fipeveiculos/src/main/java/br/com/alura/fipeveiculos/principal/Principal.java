@@ -42,16 +42,17 @@ public class Principal {
             var menu = """
                      \n**** TABELA FIPE ****
                      
-                    1 - Buscar valores de Carros
-                    2 - Buscar valores de Motos
-                    3 - Buscar valores de Caminhões
-                    4 - Listar veículos buscados
-                    5 - Buscar veiculos por trecho
-                    6 - Buscar veiculos por categoria
-                    7 - Buscar informações de um véiculo pelo nome no ChatGPT
-                    9 - Buscar Marcas de Veículos Web (fipe.org.br) e Salvar no Banco de Dados 
-                    10 - Buscar Marcas de Veículos Salvas
-                    11 - Buscar Detalhe da Marca no ChatGPT
+                     1 - Buscar valores de Carros
+                     2 - Buscar valores de Motos
+                     3 - Buscar valores de Caminhões
+                     4 - Listar veículos buscados
+                     5 - Buscar veiculos por trecho
+                     6 - Buscar veiculos por categoria
+                     7 - Buscar informações de um véiculo pelo nome no ChatGPT
+                     9 - Buscar Marcas na Web (fipe.org.br) e Salvar no Banco de Dados ===>>> OK
+                    10 - Buscar Marcas de Veículos Salvas ================================>>> OK
+                    11 - Buscar Detalhe da Marca no ChatGPT ==============================>>> OK
+                    99 - Deletar Banco de Dados  
                                     
                     0 - Sair                     """;
             System.out.println(menu);
