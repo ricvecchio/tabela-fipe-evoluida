@@ -23,8 +23,8 @@ public class Principal {
 
     private MarcaRepository repositorio;
 
-    private DadosMarca marcaBusca;
-//    private Optional<DadosMarca> marcaBusca;
+//    private DadosMarca buscaMarca;
+//    private Optional<DadosMarca> buscaMarca;
 
     String endereco;
     Long id;
@@ -102,19 +102,20 @@ public class Principal {
         detalheMarca = ConsultaChatGPT.obterDadosIA(textoIA).trim();
         System.out.println(detalheMarca);
 
-        DadosMarca marcaBusca = repositorio.findByMarcaContainingIgnoreCase(marca);
-        id = marcaBusca.getId();
+//        segmento = "carros";
+        DadosMarca buscaMarca = repositorio.findByMarcaContainingIgnoreCase(marca);
+        System.out.println("Dados da Marca: " + buscaMarca);
+        id = buscaMarca.getId();
 
-        System.out.println("Dados da Marca: " + marcaBusca);
         updateDetalheIa_ShouldUpdateDetalheIa();
 
 
 
 
-//        marcaBusca = repositorio.findByMarcaContainingIgnoreCase(marca);
+//        buscaMarca = repositorio.findByMarcaContainingIgnoreCase(marca);
 //
-//        if (marcaBusca.isPresent()) {
-//            System.out.println("Dados da Marca: " + marcaBusca);
+//        if (buscaMarca.isPresent()) {
+//            System.out.println("Dados da Marca: " + buscaMarca);
 //            updateDetalheIa_ShouldUpdateDetalheIa();
 //        } else {
 //            System.out.println("Marca não encontrada!");

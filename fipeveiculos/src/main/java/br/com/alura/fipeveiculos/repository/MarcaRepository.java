@@ -10,6 +10,9 @@ import org.springframework.data.repository.query.Param;
 import java.util.Optional;
 
 public interface MarcaRepository extends JpaRepository<DadosMarca, Long> {
+
+//    @Query(value = "Select * FROM Marcas m WHERE m.Marca=:marca AND m.segmento = 'carros'", nativeQuery = true)
+    @Query(value = "Select * FROM Marcas m WHERE m.segmento = 'carros'", nativeQuery = true)
     DadosMarca findByMarcaContainingIgnoreCase(String marca);
 
     @Modifying
