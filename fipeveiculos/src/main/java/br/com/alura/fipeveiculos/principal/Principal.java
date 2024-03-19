@@ -209,7 +209,7 @@ public class Principal {
     private void consultaDadosMarcasSalvo() {
         List<DadosMarca> marcas = repositorio.findAll();
         marcas.stream()
-                .sorted(Comparator.comparing(DadosMarca::getId))
+                .sorted(Comparator.comparing(DadosMarca::getMarca))
                 .forEach(System.out::println);
     }
 
