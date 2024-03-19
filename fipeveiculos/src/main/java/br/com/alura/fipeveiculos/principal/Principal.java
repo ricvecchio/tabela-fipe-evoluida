@@ -231,8 +231,9 @@ public class Principal {
 
     public void listarMarcasRepositorio() {
         List<DadosMarca> marcas = repositorio.findAll();
+
         marcas.stream()
-                .sorted(Comparator.comparing(DadosMarca::getId))
+                .sorted(Comparator.comparing(DadosMarca::getMarca))
                 .forEach(System.out::println);
     }
 
