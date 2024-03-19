@@ -104,9 +104,8 @@ public class Principal {
         exibeMenuSegmento();
         var json = consumo.obterDados(endereco);
         var marcas = conversor.obterLista(json, Dados.class);
-        System.out.println("Teste funcionando = " + marcas);
         marcas.stream()
-                .sorted(Comparator.comparing(Dados::codigo))
+                .sorted(Comparator.comparing(Dados::nome))
                 .forEach(System.out::println);
 /*
         Recebe o código da marca digitado e efetua uma busca dos modelos de véiculos ordenando pelo código.
@@ -133,7 +132,7 @@ public class Principal {
         }
         var modeloLista = conversor.obterDados(json, Modelos.class);
         modeloLista.modelos().stream()
-                .sorted(Comparator.comparing(Dados::codigo))
+                .sorted(Comparator.comparing(Dados::nome))
                 .forEach(System.out::println);
 /*
         Efetua uma busca do veículo pelo trecho digitado e cria uma nova lista.
@@ -148,6 +147,7 @@ public class Principal {
             } else {
                 List<Dados> modelosFiltrados = modeloLista.modelos().stream()
                         .filter(m -> m.nome().toLowerCase().contains(nomeVeiculo.toLowerCase()))
+                        .sorted(Comparator.comparing(Dados::nome))
                         .collect(Collectors.toList());
                 long tCount = modelosFiltrados.stream().count();
                 if (tCount == 0) {
