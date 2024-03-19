@@ -22,9 +22,6 @@ public class Principal {
 
     private MarcaRepository repositorio;
 
-//    private DadosMarca buscaMarca;
-//    private Optional<DadosMarca> buscaMarca;
-
     String endereco;
     Long idMarca;
     String detalheMarca;

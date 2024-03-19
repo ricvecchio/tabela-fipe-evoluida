@@ -79,7 +79,7 @@ public class DadosMarca {
     @Override
     public String toString() {
         return "ID = " + id +
-                " Código = " + codigo +
+                ", Código = " + codigo +
                 ", Marca = " + marca +
                 ", Segmento = " + segmento +
                 ", Detalhe = " + detalheIa;
