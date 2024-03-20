@@ -19,7 +19,6 @@ public class Principal {
     private ConsumoApi consumo = new ConsumoApi();
     private ConverteDados conversor = new ConverteDados();
     private final String URL_BASE = "https://parallelum.com.br/fipe/api/v1/";
-
     private MarcaRepository repositorio;
 
     String endereco;
@@ -208,15 +207,8 @@ public class Principal {
         listarESalvarMarcasWeb();
     }
 
-    private void consultaDadosMarcasSalvo() {
-        List<DadosMarca> marcas = repositorio.findAll();
-        marcas.stream()
-                .sorted(Comparator.comparing(DadosMarca::getMarca))
-                .forEach(System.out::println);
-    }
-
     private void buscarDetalheMarcaChatGPT() {
-        listarMarcasRepositorio();
+        consultaDadosMarcasSalvo();
         System.out.println("\nDigite o ID da marca do veículo para buscar detalhes: ");
         idMarca = Long.valueOf(leitura.nextLine());
 
@@ -231,12 +223,21 @@ public class Principal {
         }
     }
 
-    public void listarMarcasRepositorio() {
+    private void consultaDadosMarcasSalvo() {
         List<DadosMarca> marcas = repositorio.findAll();
-
         marcas.stream()
                 .sorted(Comparator.comparing(DadosMarca::getMarca))
                 .forEach(System.out::println);
+
+//        Optional<DadosMarca> buscaMarca = repositorio.findAll();
+//
+//        if (dadosMarcaOptional.isPresent()) {
+//            dadosMarcaOptional.stream()
+//                    .sorted(Comparator.comparing(DadosMarca::getMarca))
+//                    .forEach(System.out::println);
+//        } else {
+//            System.out.println("Não existe registro no banco de dados!");
+//        }
     }
 
     private void exibeMenuSegmento() {
