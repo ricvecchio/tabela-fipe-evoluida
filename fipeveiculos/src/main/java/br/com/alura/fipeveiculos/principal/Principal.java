@@ -1,9 +1,6 @@
 package br.com.alura.fipeveiculos.principal;
 
-import br.com.alura.fipeveiculos.model.Dados;
-import br.com.alura.fipeveiculos.model.DadosMarca;
-import br.com.alura.fipeveiculos.model.DadosVeiculo;
-import br.com.alura.fipeveiculos.model.Modelos;
+import br.com.alura.fipeveiculos.model.*;
 import br.com.alura.fipeveiculos.repository.MarcaRepository;
 import br.com.alura.fipeveiculos.service.ConsultaChatGPT;
 import br.com.alura.fipeveiculos.service.ConsumoApi;
@@ -39,8 +36,10 @@ public class Principal {
                      1 - Buscar valores de carros, motos ou caminhões no site (fipe.org.br) =>>> OK
                      2 - Buscar informações de um veículo pelo nome no ChatGPT ==============>>> OK
                      3 - Buscar marcas no site (fipe.org.br) e salvar no banco de dados =====>>> OK
-                     4 - Listar marcas salvas no Banco de Dados =============================>>> OK
+                     4 - Listar marcas salvas no banco de dados (Marcas) ====================>>> OK
                      5 - Buscar detalhe da marca no ChatGPT e atualizar no banco de dados ===>>> OK
+                     6 - Buscar veiculos salvos no banco de dados (Veículos)  
+                     7 - Buscar lista de veículos pela marca 
                      8 - Listar veículos salvo no banco de dados
                      9 - Buscar veiculos por trecho
                     10 - Buscar veiculos por categoria
@@ -67,6 +66,11 @@ public class Principal {
                 case 5:
                     buscarDetalheMarcaChatGPT();
                     break;
+//                case 6:
+//                    buscarVeiculosSalvos();
+                case 7:
+                    buscarVeiculosPorMarca();
+                    break;
                 case 99:
                     limparBancoDeDados();
                     break;
@@ -77,6 +81,40 @@ public class Principal {
                     System.out.println("Opção inválida");
             }
         }
+    }
+
+    private void buscarVeiculosPorMarca() {
+        consultaDadosMarcasSalvo();
+        List<DadosMarca> marcas = repositorio.findAll();
+        marcas.stream()
+                .sorted(Comparator.comparing(DadosMarca::getMarca))
+                .forEach(System.out::println);
+
+        String enderecoBase;
+        enderecoBase = endereco;
+        String json = null;
+        while (json == null) {
+            System.out.println("\nEscolha uma marca pelo código:");
+            var codigoMarca = leitura.nextLine();
+
+            var segmento = "carros";
+            // BUSCAR O SEGMENTO NA LISTA DE MARCAS: marcas
+
+            endereco = URL_BASE + segmento + "/marcas/" + codigoMarca + "/modelos/";
+            System.out.println("TESTANDO endereco = " + endereco);
+
+            json = consumo.obterDados(endereco);
+            if (json == null) {
+                System.out.println("\nCódigo não encontrado.");
+                endereco = enderecoBase;
+            } else {
+                break;
+            }
+        }
+        var modeloLista = conversor.obterDados(json, Modelos.class);
+        modeloLista.modelos().stream()
+                .sorted(Comparator.comparing(DadosSite::nome))
+                .forEach(System.out::println);
     }
 
     public void updateDetalheIa_ShouldUpdateDetalheIa() {
@@ -101,9 +139,9 @@ public class Principal {
     private void buscarVeiculoWeb() {
         exibeMenuSegmento();
         var json = consumo.obterDados(endereco);
-        var marcas = conversor.obterLista(json, Dados.class);
+        var marcas = conversor.obterLista(json, DadosSite.class);
         marcas.stream()
-                .sorted(Comparator.comparing(Dados::nome))
+                .sorted(Comparator.comparing(DadosSite::nome))
                 .forEach(System.out::println);
 /*
         Recebe o código da marca digitado e efetua uma busca dos modelos de véiculos ordenando pelo código.
@@ -130,7 +168,7 @@ public class Principal {
         }
         var modeloLista = conversor.obterDados(json, Modelos.class);
         modeloLista.modelos().stream()
-                .sorted(Comparator.comparing(Dados::nome))
+                .sorted(Comparator.comparing(DadosSite::nome))
                 .forEach(System.out::println);
 /*
         Efetua uma busca do veículo pelo trecho digitado e cria uma nova lista.
@@ -143,9 +181,9 @@ public class Principal {
                 System.out.println("\n*** Aplicação Encerrada ***");
                 return;
             } else {
-                List<Dados> modelosFiltrados = modeloLista.modelos().stream()
+                List<DadosSite> modelosFiltrados = modeloLista.modelos().stream()
                         .filter(m -> m.nome().toLowerCase().contains(nomeVeiculo.toLowerCase()))
-                        .sorted(Comparator.comparing(Dados::nome))
+                        .sorted(Comparator.comparing(DadosSite::nome))
                         .collect(Collectors.toList());
                 long tCount = modelosFiltrados.stream().count();
                 if (tCount == 0) {
@@ -179,7 +217,7 @@ public class Principal {
                 }
             }
         }
-        List<Dados> anos = conversor.obterLista(json, Dados.class);
+        List<DadosSite> anos = conversor.obterLista(json, DadosSite.class);
 /*
         Cria uma nova lista de veículos, incrementando com os dados dos anos disponíveis.
 */
@@ -189,6 +227,7 @@ public class Principal {
             json = consumo.obterDados(enderecoAnos);
             DadosVeiculo veiculo = conversor.obterDados(json, DadosVeiculo.class);
             veiculos.add(veiculo);
+//            repositorio.save(listaMarcas);
         }
         System.out.println("\nTodos os veículos filtrados com avaliações por ano: \n");
         veiculos.forEach(System.out::println);

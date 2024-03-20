@@ -15,15 +15,21 @@ public class Veiculo {
     private Long id;
     @NotNull
     @JsonAlias("Modelo")
-    String modelo;
+    public String modelo;
     @JsonAlias("AnoModelo")
-    Integer ano;
+    public Integer ano;
     @JsonAlias("Valor")
-    String valor;
+    public String valor;
     @JsonAlias("Combustivel")
-    String combustivel;
+    public String combustivel;
+    @NotNull
+    @Column(name = "CodigoMarca")
+    private String codigoMarca;
     @JsonAlias("Marca")
-    String marca;
+    public String marca;
+
+    @ManyToOne
+    private DadosMarca dadosMarca;
 
     @NotNull
     public Long getId() {
@@ -73,6 +79,14 @@ public class Veiculo {
 
     public void setMarca(String marca) {
         this.marca = marca;
+    }
+
+    public DadosMarca getDadosMarca() {
+        return dadosMarca;
+    }
+
+    public void setDadosMarca(DadosMarca dadosMarca) {
+        this.dadosMarca = dadosMarca;
     }
 
     @Override

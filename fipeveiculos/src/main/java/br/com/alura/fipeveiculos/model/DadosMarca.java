@@ -25,7 +25,8 @@ public class DadosMarca {
     private String detalheIa;
     private String segmento;
 
-    @Transient
+//    @Transient
+    @OneToMany(mappedBy = "dadosMarca", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Veiculo> veiculos = new ArrayList<>();
 
     public Long getId() {
