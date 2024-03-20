@@ -229,15 +229,10 @@ public class Principal {
                 .sorted(Comparator.comparing(DadosMarca::getMarca))
                 .forEach(System.out::println);
 
-//        Optional<DadosMarca> buscaMarca = repositorio.findAll();
-//
-//        if (dadosMarcaOptional.isPresent()) {
-//            dadosMarcaOptional.stream()
-//                    .sorted(Comparator.comparing(DadosMarca::getMarca))
-//                    .forEach(System.out::println);
-//        } else {
-//            System.out.println("Não existe registro no banco de dados!");
-//        }
+        if (marcas.isEmpty() == true) {
+            System.out.println("Não existe registro no banco de dados!");
+            exibeMenu();
+        }
     }
 
     private void exibeMenuSegmento() {
