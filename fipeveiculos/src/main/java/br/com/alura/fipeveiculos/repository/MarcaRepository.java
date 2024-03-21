@@ -26,6 +26,11 @@ public interface MarcaRepository extends JpaRepository<DadosMarca, Long> {
     @Modifying
     @Transactional
     @Query("Delete DadosMarca")
-    public void deleteFull();
+    public void deleteDadosMarcaFull();
+
+    @Modifying
+    @Transactional
+    @Query("Delete Veiculo")
+    public void deleteVeiculoFull();
 
 }

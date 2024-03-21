@@ -128,7 +128,9 @@ public class Principal {
 
         if (buscaMarca.isPresent()) {
             var marcaEncontrada = buscaMarca.get();
+            var quantidadeLista = modeloLista.modelos().stream().count();
             System.out.println("TESTANDO marcaEncontrada : " + marcaEncontrada);
+            System.out.println("TESTANDO quantidadeLista: " + quantidadeLista);
 
             Veiculo veiculonovo = new Veiculo();
             veiculonovo.setCombustivel("Gasolina");
@@ -148,13 +150,6 @@ public class Principal {
                 repositorio.save(marcaEncontrada);
             }
         }
-
-//        List<Veiculo> veiculos = modeloLista.modelos().stream()
-//                .flatMap(v -> v.veiculos().stream())
-//                .collect(Collectors.toList());
-//                .forEach(System.out::println);
-//
-
     }
 
     public void updateDetalheIa_ShouldUpdateDetalheIa() {
@@ -352,7 +347,8 @@ public class Principal {
     }
 
     private void limparBancoDeDados() {
-        repositorio.deleteFull();
+        repositorio.deleteDadosMarcaFull();
+        repositorio.deleteVeiculoFull();
     }
 }
 
