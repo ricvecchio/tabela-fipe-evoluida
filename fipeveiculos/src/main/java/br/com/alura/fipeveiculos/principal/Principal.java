@@ -18,6 +18,9 @@ public class Principal {
     private final String URL_BASE = "https://parallelum.com.br/fipe/api/v1/";
     private MarcaRepository repositorio;
 
+    private List<DadosMarca> marcas = new ArrayList<>();
+    private List<Veiculo> veiculos = new ArrayList<>();
+
     String endereco;
     Long idMarca;
     String detalheMarca;
@@ -90,12 +93,13 @@ public class Principal {
                 .sorted(Comparator.comparing(DadosMarca::getMarca))
                 .forEach(System.out::println);
 
+        String codigoMarca = null;
         String enderecoBase;
         enderecoBase = endereco;
         String json = null;
         while (json == null) {
             System.out.println("\nEscolha uma marca pelo código:");
-            var codigoMarca = leitura.nextLine();
+            codigoMarca = leitura.nextLine();
 
             var segmento = "carros";
             // BUSCAR O SEGMENTO NA LISTA DE MARCAS: marcas
@@ -115,6 +119,42 @@ public class Principal {
         modeloLista.modelos().stream()
                 .sorted(Comparator.comparing(DadosSite::nome))
                 .forEach(System.out::println);
+
+        codigoMarca = "1140";
+        Optional<DadosMarca> buscaMarca = repositorio.findById(Long.valueOf(codigoMarca));
+        System.out.println("TESTANDO buscaMarca get: " + buscaMarca.get().getCodigo());
+        System.out.println("TESTANDO modeloLista : " + modeloLista);
+
+
+        if (buscaMarca.isPresent()) {
+            var marcaEncontrada = buscaMarca.get();
+            System.out.println("TESTANDO marcaEncontrada : " + marcaEncontrada);
+
+            Veiculo veiculonovo = new Veiculo();
+            veiculonovo.setCombustivel("Gasolina");
+            veiculonovo.setCodigoMarca("59");
+            veiculonovo.setMarca("Volkswagen");
+            veiculonovo.setValor("R$ 120.000,00");
+            veiculonovo.setModelo("Nivus");
+            veiculonovo.setAno(2022);
+            System.out.println("TESTANDO veiculonovo : " + veiculonovo);
+
+            List<Veiculo> veiculosnovo = new ArrayList<>();
+            var qtde = 1;
+            for (int i = 0; i <= qtde; i++) {
+                veiculosnovo.add(veiculonovo);
+                marcaEncontrada.setVeiculos(veiculosnovo);
+                System.out.println("TESTANDO veiculosnovo : " + veiculosnovo);
+                repositorio.save(marcaEncontrada);
+            }
+        }
+
+//        List<Veiculo> veiculos = modeloLista.modelos().stream()
+//                .flatMap(v -> v.veiculos().stream())
+//                .collect(Collectors.toList());
+//                .forEach(System.out::println);
+//
+
     }
 
     public void updateDetalheIa_ShouldUpdateDetalheIa() {
@@ -263,7 +303,7 @@ public class Principal {
     }
 
     private void consultaDadosMarcasSalvo() {
-        List<DadosMarca> marcas = repositorio.findAll();
+        marcas = repositorio.findAll();
         marcas.stream()
                 .sorted(Comparator.comparing(DadosMarca::getMarca))
                 .forEach(System.out::println);

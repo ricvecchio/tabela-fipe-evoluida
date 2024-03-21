@@ -31,21 +31,19 @@ public class Veiculo {
     @ManyToOne
     private DadosMarca dadosMarca;
 
-    @NotNull
     public Long getId() {
         return id;
     }
 
-    public void setId(@NotNull Long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    @NotNull
     public String getModelo() {
         return modelo;
     }
 
-    public void setModelo(@NotNull String modelo) {
+    public void setModelo(String modelo) {
         this.modelo = modelo;
     }
 
@@ -73,6 +71,12 @@ public class Veiculo {
         this.combustivel = combustivel;
     }
 
+    public String getCodigoMarca() {
+        return codigoMarca;
+    }
+    public void setCodigoMarca(String codigoMarca) {
+        this.codigoMarca = codigoMarca;
+    }
     public String getMarca() {
         return marca;
     }

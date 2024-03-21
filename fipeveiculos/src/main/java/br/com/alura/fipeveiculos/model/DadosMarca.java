@@ -74,6 +74,7 @@ public class DadosMarca {
     }
 
     public void setVeiculos(List<Veiculo> veiculos) {
+        veiculos.forEach(v -> v.setDadosMarca(this));
         this.veiculos = veiculos;
     }
 
