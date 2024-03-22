@@ -101,11 +101,14 @@ public class Principal {
             System.out.println("\nEscolha uma marca pelo código:");
             codigoMarca = leitura.nextLine();
 
-            var segmento = "carros";
-            // BUSCAR O SEGMENTO NA LISTA DE MARCAS: marcas
+            String finalCodigoMarca = codigoMarca;
+            var veiculoFiltrado = marcas.stream()
+                    .filter(m -> m.getCodigo().equalsIgnoreCase(finalCodigoMarca))
+                    .sorted(Comparator.comparing(DadosMarca::getMarca))
+                            .collect(Collectors.toList());
 
+            var segmento = veiculoFiltrado.get(0).getSegmento().toLowerCase();
             endereco = URL_BASE + segmento + "/marcas/" + codigoMarca + "/modelos/";
-            System.out.println("TESTANDO endereco = " + endereco);
 
             json = consumo.obterDados(endereco);
             if (json == null) {
@@ -120,11 +123,9 @@ public class Principal {
                 .sorted(Comparator.comparing(DadosSite::nome))
                 .forEach(System.out::println);
 
-        codigoMarca = "1140";
-        Optional<DadosMarca> buscaMarca = repositorio.findById(Long.valueOf(codigoMarca));
-        System.out.println("TESTANDO buscaMarca get: " + buscaMarca.get().getCodigo());
-        System.out.println("TESTANDO modeloLista : " + modeloLista);
+        Optional<DadosMarca> buscaMarca = repositorio.findByCodigo(codigoMarca);
 
+        System.out.println("TESTANDO modeloLista : " + modeloLista);
 
         if (buscaMarca.isPresent()) {
             var marcaEncontrada = buscaMarca.get();
@@ -152,7 +153,7 @@ public class Principal {
         }
     }
 
-    public void updateDetalheIa_ShouldUpdateDetalheIa() {
+    public void updateDetalheIa() {
         repositorio.updateDetalheIa(idMarca, detalheMarca);
     }
 
@@ -291,7 +292,7 @@ public class Principal {
         if (buscaMarca.isPresent()) {
             String textoIA = "Ano e país da marca " + buscaMarca.get().getMarca();
             detalheMarca = ConsultaChatGPT.obterDadosIA(textoIA).trim();
-            updateDetalheIa_ShouldUpdateDetalheIa();
+            updateDetalheIa();
         } else {
             System.out.println("ID da Marca não localizado!");
         }
@@ -347,10 +348,42 @@ public class Principal {
     }
 
     private void limparBancoDeDados() {
-        repositorio.deleteDadosMarcaFull();
-        repositorio.deleteVeiculoFull();
+        var opcaoDelete = -1;
+        while (opcaoDelete != 0) {
+            var menu = """
+                     \n**** Digite a Tabela para Limpeza ****
+                     
+                    1 - Marcas
+                    2 - Veículos
+                    3 - Ambas
+                                    
+                    0 - Sair                     """;
+            System.out.println(menu);
+            opcaoDelete = leitura.nextInt();
+            leitura.nextLine();
+            switch (opcaoDelete) {
+                case 1:
+                    repositorio.deleteDadosMarcaFull();
+                    return;
+                case 2:
+                    repositorio.deleteVeiculoFull();
+                    return;
+                case 3:
+                    repositorio.deleteDadosMarcaFull();
+                    repositorio.deleteVeiculoFull();
+                    return;
+                case 0:
+                    System.out.println("Saindo...");
+                    return;
+                default:
+                    System.out.println("Opção inválida");
+                    break;
+            }
+        }
     }
 }
+
+
 
 
 
