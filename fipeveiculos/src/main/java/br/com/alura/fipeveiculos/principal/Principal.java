@@ -125,7 +125,6 @@ public class Principal {
 
         Optional<DadosMarca> buscaMarca = repositorio.findByCodigo(codigoMarca);
         var nomeMarca = buscaMarca.get().getMarca();
-        System.out.println("TESTANDO modeloLista : " + modeloLista);
 
         if (buscaMarca.isPresent()) {
             var marcaEncontrada = buscaMarca.get();
@@ -133,17 +132,10 @@ public class Principal {
             System.out.println("TESTANDO marcaEncontrada : " + marcaEncontrada);
             System.out.println("TESTANDO quantidadeLista: " + quantidadeLista);
 
-//                var nomeVeiculo =  modeloLista.modelos().stream()
-//                        .filter(m -> m.codigo().equals("2294"))
-//                        .map(m -> m.nome())
-//                        .collect(Collectors.toList());
-//                System.out.println("TESTANDO codigoVeiculo: " + codigoVeiculo);
-
-            //Criar looping buscando pegando codigo e nome e montando a classe (Veiculo)
+            //ALTERAR LOOPING PARA VARRER TODOS VEICULOS E INCLUIR NA TABELA (VEICULOS)
             List<Veiculo> listaVeiculos = new ArrayList<>();
             for (int i = 0; i < quantidadeLista; i++) {
 
-                // NESSA LEITURA TRANSFORMAR O RETORNO DE LISTA [] EM VARIAVEL SEM LISTA (SEM [])
                 var codigoVeiculo =  modeloLista.modelos().stream()
                         .filter(m -> m.codigo().equals("9680"))
                         .map(m -> m.codigo())
@@ -153,8 +145,8 @@ public class Principal {
                         .map(m -> m.nome())
                         .findFirst();
 
-                System.out.println("TESTANDO testeCodigoVeiculo: " + codigoVeiculo);
-                System.out.println("TESTANDO testeNomeVeiculo: " + nomeVeiculo);
+                System.out.println("TESTANDO codigoVeiculo: " + codigoVeiculo);
+                System.out.println("TESTANDO nomeVeiculo: " + nomeVeiculo);
 
                 Veiculo dadosVeiculo = new Veiculo();
                 dadosVeiculo.setCodigoModelo(codigoVeiculo.get());
@@ -162,7 +154,7 @@ public class Principal {
                 dadosVeiculo.setCodigoMarca(codigoMarca);
                 dadosVeiculo.setMarca(nomeMarca);
 
-                System.out.println("TESTANDO veiculonovo : " + dadosVeiculo);
+                System.out.println("TESTANDO dadosVeiculo : " + dadosVeiculo);
 
                 listaVeiculos.add(dadosVeiculo);
                 marcaEncontrada.setVeiculos(listaVeiculos);
