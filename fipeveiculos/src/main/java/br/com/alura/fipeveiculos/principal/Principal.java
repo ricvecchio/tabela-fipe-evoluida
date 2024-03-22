@@ -133,21 +133,38 @@ public class Principal {
             System.out.println("TESTANDO marcaEncontrada : " + marcaEncontrada);
             System.out.println("TESTANDO quantidadeLista: " + quantidadeLista);
 
-            Veiculo veiculonovo = new Veiculo();
-            veiculonovo.setCombustivel("Gasolina");
-            veiculonovo.setCodigoMarca("59");
-            veiculonovo.setMarca("Volkswagen");
-            veiculonovo.setValor("R$ 120.000,00");
-            veiculonovo.setModelo("Nivus");
-            veiculonovo.setAno(2022);
-            System.out.println("TESTANDO veiculonovo : " + veiculonovo);
+//                var nomeVeiculo =  modeloLista.modelos().stream()
+//                        .filter(m -> m.codigo().equals("2294"))
+//                        .map(m -> m.nome())
+//                        .collect(Collectors.toList());
+//                System.out.println("TESTANDO codigoVeiculo: " + codigoVeiculo);
 
-            List<Veiculo> veiculosnovo = new ArrayList<>();
-            var qtde = 1;
-            for (int i = 0; i <= qtde; i++) {
-                veiculosnovo.add(veiculonovo);
-                marcaEncontrada.setVeiculos(veiculosnovo);
-                System.out.println("TESTANDO veiculosnovo : " + veiculosnovo);
+            //Criar looping buscando pegando codigo e nome e montando a classe (Veiculo)
+            List<Veiculo> listaVeiculos = new ArrayList<>();
+            for (int i = 0; i < quantidadeLista; i++) {
+
+                // NESSA LEITURA TRANSFORMAR O RETORNO DE LISTA [] EM VARIAVEL SEM LISTA (SEM [])
+                var codigoVeiculo =  modeloLista.modelos().stream()
+                        .filter(m -> m.codigo().equals("2294"))
+                        .map(m -> m.codigo())
+                        .findFirst();
+                var nomeVeiculo =  modeloLista.modelos().stream()
+                        .filter(m -> m.codigo().equals("2294"))
+                        .map(m -> m.nome())
+                        .findFirst();
+
+                System.out.println("TESTANDO testeCodigoVeiculo: " + codigoVeiculo);
+                System.out.println("TESTANDO testeNomeVeiculo: " + nomeVeiculo);
+
+                Veiculo dadosVeiculo = new Veiculo();
+                dadosVeiculo.setCodigoModelo(String.valueOf(codigoVeiculo));
+                dadosVeiculo.setModelo(String.valueOf(nomeVeiculo));
+                dadosVeiculo.setMarca("XPTO");
+
+                System.out.println("TESTANDO veiculonovo : " + dadosVeiculo);
+
+                listaVeiculos.add(dadosVeiculo);
+                marcaEncontrada.setVeiculos(listaVeiculos);
                 repositorio.save(marcaEncontrada);
             }
         }

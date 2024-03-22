@@ -14,6 +14,9 @@ public class Veiculo {
     @NotNull
     private Long id;
     @NotNull
+    @Column(name = "CodigoModelo")
+    private String codigoModelo;
+    @NotNull
     @JsonAlias("Modelo")
     public String modelo;
     @JsonAlias("AnoModelo")
@@ -22,7 +25,6 @@ public class Veiculo {
     public String valor;
     @JsonAlias("Combustivel")
     public String combustivel;
-    @NotNull
     @Column(name = "CodigoMarca")
     private String codigoMarca;
     @JsonAlias("Marca")
@@ -37,6 +39,14 @@ public class Veiculo {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getCodigoModelo() {
+        return codigoModelo;
+    }
+
+    public void setCodigoModelo(String codigoModelo) {
+        this.codigoModelo = codigoModelo;
     }
 
     public String getModelo() {
@@ -96,10 +106,12 @@ public class Veiculo {
     @Override
     public String toString() {
         return "ID = " + id +
+                ", Código Modelo = " + codigoModelo +
                 ", Modelo = " + modelo +
                 ", Ano = " + ano +
                 ", Valor = " + valor +
                 ", combustivel = " + combustivel +
+                ", Código Marca = " + codigoMarca +
                 ", Marca = " + marca;
     }
 }
