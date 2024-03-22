@@ -118,6 +118,8 @@ public class Principal {
                 break;
             }
         }
+
+        //REVER PARA EXCLUIR ESSA CLASSE E IMPRIMIR A VEICULO MESMO (TO-STRING)
         var modeloLista = conversor.obterDados(json, Modelos.class);
         modeloLista.modelos().stream()
                 .sorted(Comparator.comparing(DadosSite::nome))
@@ -132,25 +134,31 @@ public class Principal {
             System.out.println("TESTANDO marcaEncontrada : " + marcaEncontrada);
             System.out.println("TESTANDO quantidadeLista: " + quantidadeLista);
 
+            var modeloLista2 = conversor.obterDados(json, DadosModelos.class);
+            System.out.println("TESTANDO modeloLista2: " + modeloLista2.getModelos());
+
             //ALTERAR LOOPING PARA VARRER TODOS VEICULOS E INCLUIR NA TABELA (VEICULOS)
             List<Veiculo> listaVeiculos = new ArrayList<>();
             for (int i = 0; i < quantidadeLista; i++) {
 
-                var codigoVeiculo =  modeloLista.modelos().stream()
-                        .filter(m -> m.codigo().equals("9680"))
-                        .map(m -> m.codigo())
-                        .findFirst();
-                var nomeVeiculo =  modeloLista.modelos().stream()
-                        .filter(m -> m.codigo().equals("9680"))
-                        .map(m -> m.nome())
-                        .findFirst();
+//                var codigoVeiculo =  modeloLista.modelos().stream()
+//                        .filter(m -> m.codigo().equals("9680"))
+//                        .map(m -> m.codigo())
+//                        .findFirst();
+//                var nomeVeiculo =  modeloLista.modelos().stream()
+//                        .filter(m -> m.codigo().equals("9680"))
+//                        .map(m -> m.nome())
+//                        .findFirst();
 
-                System.out.println("TESTANDO codigoVeiculo: " + codigoVeiculo);
-                System.out.println("TESTANDO nomeVeiculo: " + nomeVeiculo);
+//                System.out.println("TESTANDO codigoVeiculo: " + codigoVeiculo.get());
+//                System.out.println("TESTANDO nomeVeiculo: " + nomeVeiculo.get());
+//                [i]
+
 
                 Veiculo dadosVeiculo = new Veiculo();
-                dadosVeiculo.setCodigoModelo(codigoVeiculo.get());
-                dadosVeiculo.setModelo(nomeVeiculo.get());
+//                dadosVeiculo = modeloLista.modelos().get;
+//                dadosVeiculo.setCodigoModelo(codigoVeiculo.get());
+//                dadosVeiculo.setModelo(nomeVeiculo.get());
                 dadosVeiculo.setCodigoMarca(codigoMarca);
                 dadosVeiculo.setMarca(nomeMarca);
 
@@ -171,6 +179,7 @@ public class Principal {
         System.out.println("\nLista das marcas de veículos salvas no banco de dados: \n");
         var json = consumo.obterDados(endereco);
         List<DadosMarca> marcas = conversor.obterLista(json, DadosMarca.class);
+        System.out.println("TESTANDO marcas : " + marcas);
         for (DadosMarca listaMarcas : marcas) {
             try {
                 listaMarcas.setSegmento(nomeSegmento);

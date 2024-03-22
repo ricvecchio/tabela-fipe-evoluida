@@ -15,9 +15,10 @@ public class Veiculo {
     private Long id;
     @NotNull
     @Column(name = "CodigoModelo")
+    @JsonAlias("codigo")
     private String codigoModelo;
     @NotNull
-    @JsonAlias("Modelo")
+    @JsonAlias("nome")
     public String modelo;
     @JsonAlias("AnoModelo")
     public Integer ano;
@@ -25,6 +26,8 @@ public class Veiculo {
     public String valor;
     @JsonAlias("Combustivel")
     public String combustivel;
+    @JsonAlias("Segmento")
+    public String segmento;
     @Column(name = "CodigoMarca")
     private String codigoMarca;
     @JsonAlias("Marca")
@@ -81,6 +84,14 @@ public class Veiculo {
         this.combustivel = combustivel;
     }
 
+    public String getSegmento() {
+        return segmento;
+    }
+
+    public void setSegmento(String segmento) {
+        this.segmento = segmento;
+    }
+
     public String getCodigoMarca() {
         return codigoMarca;
     }
@@ -111,6 +122,7 @@ public class Veiculo {
                 ", Ano = " + ano +
                 ", Valor = " + valor +
                 ", combustivel = " + combustivel +
+                ", segmento = " + segmento +
                 ", Código Marca = " + codigoMarca +
                 ", Marca = " + marca;
     }
