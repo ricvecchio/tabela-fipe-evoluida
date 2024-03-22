@@ -124,7 +124,7 @@ public class Principal {
                 .forEach(System.out::println);
 
         Optional<DadosMarca> buscaMarca = repositorio.findByCodigo(codigoMarca);
-
+        var nomeMarca = buscaMarca.get().getMarca();
         System.out.println("TESTANDO modeloLista : " + modeloLista);
 
         if (buscaMarca.isPresent()) {
@@ -145,11 +145,11 @@ public class Principal {
 
                 // NESSA LEITURA TRANSFORMAR O RETORNO DE LISTA [] EM VARIAVEL SEM LISTA (SEM [])
                 var codigoVeiculo =  modeloLista.modelos().stream()
-                        .filter(m -> m.codigo().equals("2294"))
+                        .filter(m -> m.codigo().equals("9680"))
                         .map(m -> m.codigo())
                         .findFirst();
                 var nomeVeiculo =  modeloLista.modelos().stream()
-                        .filter(m -> m.codigo().equals("2294"))
+                        .filter(m -> m.codigo().equals("9680"))
                         .map(m -> m.nome())
                         .findFirst();
 
@@ -157,9 +157,10 @@ public class Principal {
                 System.out.println("TESTANDO testeNomeVeiculo: " + nomeVeiculo);
 
                 Veiculo dadosVeiculo = new Veiculo();
-                dadosVeiculo.setCodigoModelo(String.valueOf(codigoVeiculo));
-                dadosVeiculo.setModelo(String.valueOf(nomeVeiculo));
-                dadosVeiculo.setMarca("XPTO");
+                dadosVeiculo.setCodigoModelo(codigoVeiculo.get());
+                dadosVeiculo.setModelo(nomeVeiculo.get());
+                dadosVeiculo.setCodigoMarca(codigoMarca);
+                dadosVeiculo.setMarca(nomeMarca);
 
                 System.out.println("TESTANDO veiculonovo : " + dadosVeiculo);
 
