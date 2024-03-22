@@ -134,10 +134,6 @@ public class Principal {
             System.out.println("TESTANDO marcaEncontrada : " + marcaEncontrada);
             System.out.println("TESTANDO quantidadeLista: " + quantidadeLista);
 
-            var modeloLista2 = conversor.obterDados(json, DadosModelos.class);
-            System.out.println("TESTANDO modeloLista2: " + modeloLista2.getModelos());
-
-            //ALTERAR LOOPING PARA VARRER TODOS VEICULOS E INCLUIR NA TABELA (VEICULOS)
             List<Veiculo> listaVeiculos = new ArrayList<>();
             for (int i = 0; i < quantidadeLista; i++) {
 
@@ -149,22 +145,23 @@ public class Principal {
 //                        .filter(m -> m.codigo().equals("9680"))
 //                        .map(m -> m.nome())
 //                        .findFirst();
-
 //                System.out.println("TESTANDO codigoVeiculo: " + codigoVeiculo.get());
 //                System.out.println("TESTANDO nomeVeiculo: " + nomeVeiculo.get());
-//                [i]
 
+                var codigoVeiculo = modeloLista.modelos().stream().map(DadosSite::codigo).collect(Collectors.toList());
+                var nomeVeiculo = modeloLista.modelos().stream().map(DadosSite::nome).collect(Collectors.toList());
+                System.out.println("TESTANDO codigoVeiculo: " + codigoVeiculo);
+                System.out.println("TESTANDO nomeVeiculo: " + nomeVeiculo);
 
                 Veiculo dadosVeiculo = new Veiculo();
-//                dadosVeiculo = modeloLista.modelos().get;
-//                dadosVeiculo.setCodigoModelo(codigoVeiculo.get());
-//                dadosVeiculo.setModelo(nomeVeiculo.get());
+//                dadosVeiculo.setCodigoModelo(codigoVeiculo);
+//                dadosVeiculo.setModelo(nomeVeiculo);
                 dadosVeiculo.setCodigoMarca(codigoMarca);
                 dadosVeiculo.setMarca(nomeMarca);
+                listaVeiculos.add(dadosVeiculo);
 
                 System.out.println("TESTANDO dadosVeiculo : " + dadosVeiculo);
 
-                listaVeiculos.add(dadosVeiculo);
                 marcaEncontrada.setVeiculos(listaVeiculos);
                 repositorio.save(marcaEncontrada);
             }
