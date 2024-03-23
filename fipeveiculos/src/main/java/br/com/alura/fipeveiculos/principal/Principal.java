@@ -44,7 +44,7 @@ public class Principal {
                      4 - Listar marcas e veículos do banco de dados (Marcas/Veículos) =======>>> OK
                      5 - Buscar detalhe da marca no ChatGPT e atualizar no banco de dados ===>>> OK
                      6 - Buscar veículos no site pela marca e salvar no banco de dados ======>>> OK
-                     7 - Buscar marca pelo nome
+                     7 - Buscar marca pelo nome =============================================>>> OK
                      8 - Buscar veiculos por categoria
                      9 - 
                     10 - 
