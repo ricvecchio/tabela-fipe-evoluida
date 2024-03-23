@@ -21,6 +21,8 @@ public class Principal {
     private List<DadosMarca> marcas = new ArrayList<>();
     private List<Veiculo> veiculos = new ArrayList<>();
 
+    private Optional<DadosMarca> marcaBusca;
+
     String endereco;
     Long idMarca;
     String detalheMarca;
@@ -42,7 +44,7 @@ public class Principal {
                      4 - Listar marcas e veículos do banco de dados (Marcas/Veículos) =======>>> OK
                      5 - Buscar detalhe da marca no ChatGPT e atualizar no banco de dados ===>>> OK
                      6 - Buscar veículos no site pela marca e salvar no banco de dados ======>>> OK
-                     7 - Buscar veiculos por trecho
+                     7 - Buscar marca pelo nome
                      8 - Buscar veiculos por categoria
                      9 - 
                     10 - 
@@ -73,6 +75,7 @@ public class Principal {
                     buscarVeiculosWebPorMarca();
                     break;
                 case 7:
+                    buscarMarcaPorTitulo();
                     break;
                 case 99:
                     limparBancoDeDados();
@@ -303,9 +306,23 @@ public class Principal {
                 .forEach(System.out::println);
 
         if (marcas.isEmpty() == true) {
-            System.out.println("Não existe registro no banco de dados Marcas!");
+            System.out.println("Não existe registro no banco de dados!");
             exibeMenu();
         }
+    }
+
+    private void buscarMarcaPorTitulo() {
+        System.out.println("Escolha uma marca pelo nome: ");
+        var nomeMarca = leitura.nextLine();
+        marcaBusca = repositorio.findByMarcaContainingIgnoreCase(nomeMarca);
+
+        if (marcaBusca.isPresent()) {
+            System.out.println("Dados da marca: " + marcaBusca.get());
+
+        } else {
+            System.out.println("Marca não encontrada!");
+        }
+
     }
 
     private void exibeMenuSegmento() {

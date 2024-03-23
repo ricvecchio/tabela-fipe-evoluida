@@ -34,4 +34,6 @@ public interface MarcaRepository extends JpaRepository<DadosMarca, Long> {
     public void deleteVeiculoFull();
 
     Optional<DadosMarca> findByCodigo(String codigoMarca);
+
+    Optional<DadosMarca> findByMarcaContainingIgnoreCase(String nomeMarca);
 }
