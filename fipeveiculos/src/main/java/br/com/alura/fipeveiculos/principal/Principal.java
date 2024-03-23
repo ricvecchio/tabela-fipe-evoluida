@@ -41,11 +41,11 @@ public class Principal {
                      3 - Buscar marcas no site (fipe.org.br) e salvar no banco de dados =====>>> OK
                      4 - Listar marcas salvas no banco de dados (Marcas) ====================>>> OK
                      5 - Buscar detalhe da marca no ChatGPT e atualizar no banco de dados ===>>> OK
-                     6 - Buscar veiculos salvos no banco de dados (Veículos)  
-                     7 - Buscar lista de veículos pela marca 
-                     8 - Listar veículos salvo no banco de dados
-                     9 - Buscar veiculos por trecho
-                    10 - Buscar veiculos por categoria
+                     6 - Buscar veículos no site pela marca e salvar no banco de dados ======>>> OK
+                     7 - Buscar veiculos salvo no banco de dados (Veículos) 
+                     8 - Buscar veiculos por trecho
+                     9 - Buscar veiculos por categoria
+                    10 - 
                     99 - Deletar banco de dados  
                                     
                     0 - Sair                     """;
@@ -69,10 +69,11 @@ public class Principal {
                 case 5:
                     buscarDetalheMarcaChatGPT();
                     break;
-//                case 6:
-//                    buscarVeiculosSalvos();
+                case 6:
+                    buscarVeiculosWebPorMarca();
+                    break;
                 case 7:
-                    buscarVeiculosPorMarca();
+                    buscarVeiculosSalvos();
                     break;
                 case 99:
                     limparBancoDeDados();
@@ -86,7 +87,19 @@ public class Principal {
         }
     }
 
-    private void buscarVeiculosPorMarca() {
+    private void buscarVeiculosSalvos() {
+        marcas = repositorio.findAll();
+        veiculos.stream()
+                .sorted(Comparator.comparing(Veiculo::getModelo))
+                .forEach(System.out::println);
+
+        if (marcas.isEmpty() == true) {
+            System.out.println("Não existe registro no banco de dados Veículos!");
+            exibeMenu();
+        }
+    }
+
+    private void buscarVeiculosWebPorMarca() {
         consultaDadosMarcasSalvo();
         List<DadosMarca> marcas = repositorio.findAll();
         marcas.stream()
@@ -94,6 +107,7 @@ public class Principal {
                 .forEach(System.out::println);
 
         String codigoMarca = null;
+        String segmento = null;
         String enderecoBase;
         enderecoBase = endereco;
         String json = null;
@@ -107,7 +121,7 @@ public class Principal {
                     .sorted(Comparator.comparing(DadosMarca::getMarca))
                             .collect(Collectors.toList());
 
-            var segmento = veiculoFiltrado.get(0).getSegmento().toLowerCase();
+            segmento = veiculoFiltrado.get(0).getSegmento().toLowerCase();
             endereco = URL_BASE + segmento + "/marcas/" + codigoMarca + "/modelos/";
 
             json = consumo.obterDados(endereco);
@@ -142,6 +156,7 @@ public class Principal {
                 dadosVeiculo.setModelo(nomeVeiculo.get(i));
                 dadosVeiculo.setCodigoMarca(codigoMarca);
                 dadosVeiculo.setMarca(nomeMarca);
+                dadosVeiculo.setSegmento(segmento);
                 listaVeiculos.add(dadosVeiculo);
 
                 marcaEncontrada.setVeiculos(listaVeiculos);
@@ -260,7 +275,6 @@ public class Principal {
             json = consumo.obterDados(enderecoAnos);
             DadosVeiculo veiculo = conversor.obterDados(json, DadosVeiculo.class);
             veiculos.add(veiculo);
-//            repositorio.save(listaMarcas);
         }
         System.out.println("\nTodos os veículos filtrados com avaliações por ano: \n");
         veiculos.forEach(System.out::println);
@@ -302,7 +316,7 @@ public class Principal {
                 .forEach(System.out::println);
 
         if (marcas.isEmpty() == true) {
-            System.out.println("Não existe registro no banco de dados!");
+            System.out.println("Não existe registro no banco de dados Marcas!");
             exibeMenu();
         }
     }

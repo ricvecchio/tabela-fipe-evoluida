@@ -11,7 +11,6 @@ import org.jetbrains.annotations.NotNull;
 public class Veiculo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @NotNull
     private Long id;
     @NotNull
     @Column(name = "CodigoModelo")
