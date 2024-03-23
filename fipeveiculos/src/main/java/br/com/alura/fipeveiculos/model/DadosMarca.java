@@ -84,7 +84,8 @@ public class DadosMarca {
                 ", Código = " + codigo +
                 ", Marca = " + marca +
                 ", Segmento = " + segmento +
-                ", Detalhe = " + detalheIa;
+                ", Detalhe = " + detalheIa +
+                 ", Veículos = " + veiculos;
     }
 }
 

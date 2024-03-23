@@ -39,12 +39,12 @@ public class Principal {
                      1 - Buscar valores de carros, motos ou caminhões no site (fipe.org.br) =>>> OK
                      2 - Buscar informações de um veículo pelo nome no ChatGPT ==============>>> OK
                      3 - Buscar marcas no site (fipe.org.br) e salvar no banco de dados =====>>> OK
-                     4 - Listar marcas salvas no banco de dados (Marcas) ====================>>> OK
+                     4 - Listar marcas e veículos do banco de dados (Marcas/Veículos) =======>>> OK
                      5 - Buscar detalhe da marca no ChatGPT e atualizar no banco de dados ===>>> OK
                      6 - Buscar veículos no site pela marca e salvar no banco de dados ======>>> OK
-                     7 - Buscar veiculos salvo no banco de dados (Veículos) 
-                     8 - Buscar veiculos por trecho
-                     9 - Buscar veiculos por categoria
+                     7 - Buscar veiculos por trecho
+                     8 - Buscar veiculos por categoria
+                     9 - 
                     10 - 
                     99 - Deletar banco de dados  
                                     
@@ -73,7 +73,6 @@ public class Principal {
                     buscarVeiculosWebPorMarca();
                     break;
                 case 7:
-                    buscarVeiculosSalvos();
                     break;
                 case 99:
                     limparBancoDeDados();
@@ -84,18 +83,6 @@ public class Principal {
                 default:
                     System.out.println("Opção inválida");
             }
-        }
-    }
-
-    private void buscarVeiculosSalvos() {
-        marcas = repositorio.findAll();
-        veiculos.stream()
-                .sorted(Comparator.comparing(Veiculo::getModelo))
-                .forEach(System.out::println);
-
-        if (marcas.isEmpty() == true) {
-            System.out.println("Não existe registro no banco de dados Veículos!");
-            exibeMenu();
         }
     }
 
