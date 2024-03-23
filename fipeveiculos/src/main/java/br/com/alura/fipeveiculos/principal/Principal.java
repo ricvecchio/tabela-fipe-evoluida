@@ -119,7 +119,6 @@ public class Principal {
             }
         }
 
-        //REVER PARA EXCLUIR ESSA CLASSE E IMPRIMIR A VEICULO MESMO (TO-STRING)
         var modeloLista = conversor.obterDados(json, Modelos.class);
         modeloLista.modelos().stream()
                 .sorted(Comparator.comparing(DadosSite::nome))
@@ -131,36 +130,19 @@ public class Principal {
         if (buscaMarca.isPresent()) {
             var marcaEncontrada = buscaMarca.get();
             var quantidadeLista = modeloLista.modelos().stream().count();
-            System.out.println("TESTANDO marcaEncontrada : " + marcaEncontrada);
-            System.out.println("TESTANDO quantidadeLista: " + quantidadeLista);
 
             List<Veiculo> listaVeiculos = new ArrayList<>();
             for (int i = 0; i < quantidadeLista; i++) {
 
-//                var codigoVeiculo =  modeloLista.modelos().stream()
-//                        .filter(m -> m.codigo().equals("9680"))
-//                        .map(m -> m.codigo())
-//                        .findFirst();
-//                var nomeVeiculo =  modeloLista.modelos().stream()
-//                        .filter(m -> m.codigo().equals("9680"))
-//                        .map(m -> m.nome())
-//                        .findFirst();
-//                System.out.println("TESTANDO codigoVeiculo: " + codigoVeiculo.get());
-//                System.out.println("TESTANDO nomeVeiculo: " + nomeVeiculo.get());
-
                 var codigoVeiculo = modeloLista.modelos().stream().map(DadosSite::codigo).collect(Collectors.toList());
                 var nomeVeiculo = modeloLista.modelos().stream().map(DadosSite::nome).collect(Collectors.toList());
-                System.out.println("TESTANDO codigoVeiculo: " + codigoVeiculo);
-                System.out.println("TESTANDO nomeVeiculo: " + nomeVeiculo);
 
                 Veiculo dadosVeiculo = new Veiculo();
-//                dadosVeiculo.setCodigoModelo(codigoVeiculo);
-//                dadosVeiculo.setModelo(nomeVeiculo);
+                dadosVeiculo.setCodigoModelo(codigoVeiculo.get(i));
+                dadosVeiculo.setModelo(nomeVeiculo.get(i));
                 dadosVeiculo.setCodigoMarca(codigoMarca);
                 dadosVeiculo.setMarca(nomeMarca);
                 listaVeiculos.add(dadosVeiculo);
-
-                System.out.println("TESTANDO dadosVeiculo : " + dadosVeiculo);
 
                 marcaEncontrada.setVeiculos(listaVeiculos);
                 repositorio.save(marcaEncontrada);
@@ -176,7 +158,6 @@ public class Principal {
         System.out.println("\nLista das marcas de veículos salvas no banco de dados: \n");
         var json = consumo.obterDados(endereco);
         List<DadosMarca> marcas = conversor.obterLista(json, DadosMarca.class);
-        System.out.println("TESTANDO marcas : " + marcas);
         for (DadosMarca listaMarcas : marcas) {
             try {
                 listaMarcas.setSegmento(nomeSegmento);
@@ -402,8 +383,6 @@ public class Principal {
 
 
 
-
-
 /*
      ANOTAÇÕES:
      ==========
@@ -434,5 +413,18 @@ public class Principal {
       *** Imprimindo todas as temporadas usando lambda (ambos estão fazendo a mesma coisa abaixo):
         temporadas.forEach(t -> System.out.println(t));
         temporadas.forEach(System.out::println);
+
+
+      *** EXEMPLOS DE FUNÇÕES .STREAM *** (FILTRA POR VALOR CRIANDO NOVA LISTA (MAP) E TRAZENDO SOMENTE O PRIMEIRO)
+
+                var codigoVeiculo =  modeloLista.modelos().stream()
+                        .filter(m -> m.codigo().equals("9680"))
+                        .map(m -> m.codigo())
+                        .findFirst();
+
+                var nomeVeiculo =  modeloLista.modelos().stream()
+                        .filter(m -> m.codigo().equals("9680"))
+                        .map(m -> m.nome())
+                        .findFirst();
 
  */
