@@ -1,12 +1,14 @@
 package br.com.alura.fipeveiculos.repository;
 
 import br.com.alura.fipeveiculos.model.DadosMarca;
+import br.com.alura.fipeveiculos.model.Veiculo;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface MarcaRepository extends JpaRepository<DadosMarca, Long> {
@@ -14,9 +16,6 @@ public interface MarcaRepository extends JpaRepository<DadosMarca, Long> {
 //    @Query(value = "Select * FROM Marcas m WHERE m.Marca=:marca AND m.segmento = 'carros'", nativeQuery = true)
 //    @Query(value = "Select * FROM Marcas WHERE Marca=:marca AND segmento = 'carros'", nativeQuery = true)
 //    @Query(value = "Select m FROM Marcas m WHERE m.Marca=:marca AND m.segmento = 'carros'", nativeQuery = true)
-
-//    DadosMarca findByMarcaContainingIgnoreCase(String idMarca);
-//    Optional<DadosMarca> findByMarcaContainingIgnoreCase(String marca);
 
     @Modifying
     @Transactional
@@ -36,4 +35,7 @@ public interface MarcaRepository extends JpaRepository<DadosMarca, Long> {
     Optional<DadosMarca> findByCodigo(String codigoMarca);
 
     Optional<DadosMarca> findByMarcaContainingIgnoreCase(String nomeMarca);
+
+    @Query("SELECT v FROM DadosMarca m JOIN m.veiculos v WHERE v.modelo ILIKE %:trechoNomeVeiculo%")
+    List<Veiculo> veiculosPorTrecho(String trechoNomeVeiculo);
 }
