@@ -43,4 +43,7 @@ public interface MarcaRepository extends JpaRepository<DadosMarca, Long> {
 
     @Query("SELECT v FROM DadosMarca m JOIN m.veiculos v WHERE v.modelo ILIKE %:nomeVeiculo% AND v.valor <= :valorVeiculo")
     List<Veiculo> veiculosPorValores(String nomeVeiculo, double valorVeiculo);
+
+    @Query("SELECT v FROM DadosMarca m JOIN m.veiculos v WHERE v.modelo ILIKE %:nomeVeiculo% AND v.ano >= :anoLimite")
+    List<Veiculo> veiculosPorAno(String nomeVeiculo, int anoLimite);
 }

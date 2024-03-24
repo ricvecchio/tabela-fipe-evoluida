@@ -47,8 +47,9 @@ public class Principal {
                      7 - Buscar marca pelo nome =============================================>>> OK
                      8 - Buscar veículos pelo nome ou trecho
                      9 - Buscar marca e filtrar pelo segmento (carros/motos/caminhoes)
-                    10 - Buscar veículos pelo valor da tabela fipe 
-                    99 - Deletar banco de dados  
+                    10 - Buscar veículos pelo valor da tabela fipe
+                    11 - Buscar veículos a partir de uma data
+                    99 - Deletar banco de dados
                                     
                     0 - Sair                     """;
             System.out.println(menu);
@@ -85,6 +86,9 @@ public class Principal {
                     break;
                 case 10:
                     buscarVeiculoPorValor();
+                    break;
+                case 11:
+                    buscarVeiculosAposUmaData();
                     break;
                 case 99:
                     limparBancoDeDados();
@@ -364,6 +368,18 @@ public class Principal {
         veiculosEncontrados.forEach(v ->
                 System.out.println(v.getModelo() + " Valores: " + v.getValor()));
     }
+
+    private void buscarVeiculosAposUmaData() {
+        System.out.println("Qual o veículo para busca?");
+        var nomeVeiculo = leitura.nextLine();
+        System.out.println("Digite o ano limite do veículo:");
+        var anoLimite = leitura.nextInt();
+        leitura.nextLine();
+        List<Veiculo> veiculosAno = repositorio.veiculosPorAno(nomeVeiculo, anoLimite);
+        System.out.println("Veículos " + nomeVeiculo + " com ano maior que " + anoLimite);
+        veiculosAno.forEach(v ->
+                System.out.println(v.getModelo() + " Valores: " + v.getValor() + "Ano: " + v.getAno()));
+        }
 
     private void exibeMenuSegmento() {
         var segmento = -1;
