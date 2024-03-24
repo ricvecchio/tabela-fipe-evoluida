@@ -46,7 +46,7 @@ public class Principal {
                      6 - Buscar veículos no site pela marca e salvar no banco de dados ======>>> OK
                      7 - Buscar marca pelo nome =============================================>>> OK
                      8 - Buscar veículos pelo nome ou trecho
-                     9 - 
+                     9 - Buscar veículos pelo valor da tabela fipe 
                     10 - 
                     99 - Deletar banco de dados  
                                     
@@ -79,6 +79,9 @@ public class Principal {
                     break;
                 case 8:
                     buscarVeiculoPorTrechoNome();
+                    break;
+                case 9:
+                    buscarVeiculoPorValores();
                     break;
                 case 99:
                     limparBancoDeDados();
@@ -331,11 +334,14 @@ public class Principal {
         System.out.println("Escolha o veículo pelo nome ou trecho: ");
         var trechoNomeVeiculo = leitura.nextLine();
         List<Veiculo> veiculosEncontrados = repositorio.veiculosPorTrecho(trechoNomeVeiculo);
-        System.out.println(veiculosEncontrados);
-//        episodiosEncontrados.forEach(e ->
-//                System.out.printf("Série: %s Temporada %s - Episódio %s - %s\n",
-//                        e.getSerie().getTitulo(), e.getTemporada(),
-//                        e.getNumeroEpisodio(), e.getTitulo()));
+        veiculosEncontrados.forEach(v ->
+                System.out.printf("Veículo: %s - Segmento: %s - Ano: %s - Valor: %s\n",
+                        v.getModelo(), v.getSegmento(),
+                        v.getAno(), v.getValor()));
+    }
+
+    private void buscarVeiculoPorValores() {
+
     }
 
     private void exibeMenuSegmento() {
