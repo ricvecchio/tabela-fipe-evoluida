@@ -46,8 +46,8 @@ public class Principal {
                      6 - Buscar veículos no site pela marca e salvar no banco de dados ======>>> OK
                      7 - Buscar marca pelo nome =============================================>>> OK
                      8 - Buscar veículos pelo nome ou trecho
-                     9 - Buscar veículos pelo valor da tabela fipe 
-                    10 - 
+                     9 - Buscar marca e filtrar pelo segmento (carros/motos/caminhoes)
+                    10 - Buscar veículos pelo valor da tabela fipe 
                     99 - Deletar banco de dados  
                                     
                     0 - Sair                     """;
@@ -81,7 +81,10 @@ public class Principal {
                     buscarVeiculoPorTrechoNome();
                     break;
                 case 9:
-                    buscarVeiculoPorValores();
+                    buscarMarcaPorSegmento();
+                    break;
+                case 10:
+                    buscarVeiculoPorValor();
                     break;
                 case 99:
                     limparBancoDeDados();
@@ -340,8 +343,26 @@ public class Principal {
                         v.getAno(), v.getValor()));
     }
 
-    private void buscarVeiculoPorValores() {
+    private void buscarMarcaPorSegmento() {
+        System.out.println("Qual a marca para busca?");
+        var nomeMarca = leitura.nextLine();
+        System.out.println("Qual o segmento para busca?");
+        var segmentoMarca = leitura.nextLine();
+        List<DadosMarca> marcasEncontradas = repositorio.findByMarcaContainingIgnoreCaseAndSegmentoContainingIgnoreCase(nomeMarca, segmentoMarca);
+        marcasEncontradas.forEach(m ->
+                System.out.println("Marcas: " + m.getMarca() + " Segmento: " + m.getSegmento()));
 
+    }
+
+    private void buscarVeiculoPorValor() {
+        System.out.println("Qual o veículo para busca?");
+        var nomeVeiculo = leitura.nextLine();
+        System.out.println("Qual o valor máximo do veículo?");
+        var valorVeiculo = leitura.nextDouble();
+        List<Veiculo> veiculosEncontrados = repositorio.veiculosPorValores(nomeVeiculo, valorVeiculo);
+        System.out.println("Veículos " + nomeVeiculo + " com valores menos que " + valorVeiculo);
+        veiculosEncontrados.forEach(v ->
+                System.out.println(v.getModelo() + " Valores: " + v.getValor()));
     }
 
     private void exibeMenuSegmento() {
