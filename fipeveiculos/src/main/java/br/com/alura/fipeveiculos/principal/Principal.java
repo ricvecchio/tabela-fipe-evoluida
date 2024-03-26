@@ -38,18 +38,18 @@ public class Principal {
             var menu = """
                      \n**** TABELA FIPE ****
                      
-                     1 - Buscar valores de carros, motos ou caminhões no site (fipe.org.br) =>>> OK
+                     1 - Buscar valores de carros, motos ou caminhões no site (fipe.org.br)  
                      2 - Buscar informações de um veículo pelo nome no ChatGPT ==============>>> OK
                      3 - Buscar marcas no site (fipe.org.br) e salvar no banco de dados =====>>> OK
                      4 - Listar marcas e veículos do banco de dados (Marcas/Veículos) =======>>> OK
                      5 - Buscar detalhe da marca no ChatGPT e atualizar no banco de dados ===>>> OK
                      6 - Buscar veículos no site pela marca e salvar no banco de dados ======>>> OK
                      7 - Buscar marca pelo nome =============================================>>> OK
-                     8 - Buscar veículos pelo nome ou trecho
-                     9 - Buscar marca e filtrar pelo segmento (carros/motos/caminhoes)
-                    10 - Buscar veículos pelo valor da tabela fipe
-                    11 - Buscar veículos a partir de uma data
-                    99 - Deletar banco de dados
+                     8 - Buscar veículos pelo nome ou trecho ================================>>> OK
+                     9 - Buscar marca e filtrar pelo segmento (carros/motos/caminhoes) ======>>> OK
+                    10 - Buscar veículos pelo valor da tabela fipe ==========================>>> OK
+                    11 - Buscar veículos a partir de uma data ===============================>>> OK
+                    99 - Deletar banco de dados =============================================>>> OK
                                     
                     0 - Sair                     """;
             System.out.println(menu);
@@ -76,7 +76,7 @@ public class Principal {
                     buscarVeiculosWebPorMarca();
                     break;
                 case 7:
-                    buscarMarcaPorTitulo();
+                    buscarMarcaPorNome();
                     break;
                 case 8:
                     buscarVeiculoPorTrechoNome();
@@ -324,10 +324,10 @@ public class Principal {
         }
     }
 
-    private void buscarMarcaPorTitulo() {
+    private void buscarMarcaPorNome() {
         System.out.println("Escolha uma marca pelo nome: ");
         var nomeMarca = leitura.nextLine();
-        marcaBusca = repositorio.findByMarcaContainingIgnoreCase(nomeMarca);
+        marcaBusca = repositorio.findTop1ByMarcaContainingIgnoreCase(nomeMarca);
 
         if (marcaBusca.isPresent()) {
             System.out.println("Dados da marca: " + marcaBusca.get());
@@ -364,7 +364,7 @@ public class Principal {
         System.out.println("Qual o valor máximo do veículo?");
         var valorVeiculo = leitura.nextDouble();
         List<Veiculo> veiculosEncontrados = repositorio.veiculosPorValores(nomeVeiculo, valorVeiculo);
-        System.out.println("Veículos " + nomeVeiculo + " com valores menos que " + valorVeiculo);
+        System.out.println("Veículos " + nomeVeiculo + " com valores menores que " + valorVeiculo);
         veiculosEncontrados.forEach(v ->
                 System.out.println(v.getModelo() + " Valores: " + v.getValor()));
     }
@@ -376,9 +376,9 @@ public class Principal {
         var anoLimite = leitura.nextInt();
         leitura.nextLine();
         List<Veiculo> veiculosAno = repositorio.veiculosPorAno(nomeVeiculo, anoLimite);
-        System.out.println("Veículos " + nomeVeiculo + " com ano maior que " + anoLimite);
+        System.out.println("Veículos " + nomeVeiculo + " com ano maior que " + anoLimite + ":");
         veiculosAno.forEach(v ->
-                System.out.println(v.getModelo() + " Valores: " + v.getValor() + "Ano: " + v.getAno()));
+                System.out.println(v.getModelo() + " - Valores: " + v.getValor() + " - Ano: " + v.getAno()));
         }
 
     private void exibeMenuSegmento() {
@@ -440,8 +440,8 @@ public class Principal {
                     repositorio.deleteVeiculoFull();
                     return;
                 case 3:
-                    repositorio.deleteDadosMarcaFull();
                     repositorio.deleteVeiculoFull();
+                    repositorio.deleteDadosMarcaFull();
                     return;
                 case 0:
                     System.out.println("Saindo...");

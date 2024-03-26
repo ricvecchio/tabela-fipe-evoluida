@@ -34,12 +34,12 @@ public interface MarcaRepository extends JpaRepository<DadosMarca, Long> {
 
     Optional<DadosMarca> findByCodigo(String codigoMarca);
 
-    Optional<DadosMarca> findByMarcaContainingIgnoreCase(String nomeMarca);
+    Optional<DadosMarca> findTop1ByMarcaContainingIgnoreCase(String nomeMarca);
+
+    List<DadosMarca> findByMarcaContainingIgnoreCaseAndSegmentoContainingIgnoreCase(String nomeVeiculo, String segmentoMarca);
 
     @Query("SELECT v FROM DadosMarca m JOIN m.veiculos v WHERE v.modelo ILIKE %:trechoNomeVeiculo%")
     List<Veiculo> veiculosPorTrecho(String trechoNomeVeiculo);
-
-    List<DadosMarca> findByMarcaContainingIgnoreCaseAndSegmentoContainingIgnoreCase(String nomeVeiculo, String segmentoMarca);
 
     @Query("SELECT v FROM DadosMarca m JOIN m.veiculos v WHERE v.modelo ILIKE %:nomeVeiculo% AND v.valor <= :valorVeiculo")
     List<Veiculo> veiculosPorValores(String nomeVeiculo, double valorVeiculo);
