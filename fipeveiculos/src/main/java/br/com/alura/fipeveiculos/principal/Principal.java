@@ -20,11 +20,16 @@ public class Principal {
 
     private List<DadosMarca> marcas = new ArrayList<>();
     private List<Veiculo> veiculos = new ArrayList<>();
-
     private Optional<DadosMarca> marcaBusca;
+    private Modelos modeloLista;
+    private DadosMarca marcaEncontrada;
 
+    int opcao = -1;
+    String json = null;
     String endereco;
     Long idMarca;
+    String codigoMarca;
+    String nomeMarca;
     String detalheMarca;
     String nomeSegmento;
 
@@ -33,7 +38,6 @@ public class Principal {
     }
 
     public void exibeMenu() {
-        var opcao = -1;
         while (opcao != 0) {
             var menu = """
                      \n**** TABELA FIPE ****
@@ -109,11 +113,8 @@ public class Principal {
                 .sorted(Comparator.comparing(DadosMarca::getMarca))
                 .forEach(System.out::println);
 
-        String codigoMarca = null;
-        String segmento = null;
         String enderecoBase;
         enderecoBase = endereco;
-        String json = null;
         while (json == null) {
             System.out.println("\nEscolha uma marca pelo código:");
             codigoMarca = leitura.nextLine();
@@ -122,10 +123,10 @@ public class Principal {
             var veiculoFiltrado = marcas.stream()
                     .filter(m -> m.getCodigo().equalsIgnoreCase(finalCodigoMarca))
                     .sorted(Comparator.comparing(DadosMarca::getMarca))
-                            .collect(Collectors.toList());
+                    .collect(Collectors.toList());
 
-            segmento = veiculoFiltrado.get(0).getSegmento().toLowerCase();
-            endereco = URL_BASE + segmento + "/marcas/" + codigoMarca + "/modelos/";
+            nomeSegmento = veiculoFiltrado.get(0).getSegmento().toLowerCase();
+            endereco = URL_BASE + nomeSegmento + "/marcas/" + codigoMarca + "/modelos/";
 
             json = consumo.obterDados(endereco);
             if (json == null) {
@@ -136,35 +137,39 @@ public class Principal {
             }
         }
 
-        var modeloLista = conversor.obterDados(json, Modelos.class);
+        modeloLista = conversor.obterDados(json, Modelos.class);
         modeloLista.modelos().stream()
                 .sorted(Comparator.comparing(DadosSite::nome))
                 .forEach(System.out::println);
 
         Optional<DadosMarca> buscaMarca = repositorio.findByCodigo(codigoMarca);
-        var nomeMarca = buscaMarca.get().getMarca();
-
         if (buscaMarca.isPresent()) {
-            var marcaEncontrada = buscaMarca.get();
-            var quantidadeLista = modeloLista.modelos().stream().count();
+            nomeMarca = buscaMarca.get().getMarca();
+            marcaEncontrada = buscaMarca.get();
+            insereVeiculosBancoDeDados();
+        }
+    }
 
-            List<Veiculo> listaVeiculos = new ArrayList<>();
-            for (int i = 0; i < quantidadeLista; i++) {
+    public void insereVeiculosBancoDeDados() {
 
-                var codigoVeiculo = modeloLista.modelos().stream().map(DadosSite::codigo).collect(Collectors.toList());
-                var nomeVeiculo = modeloLista.modelos().stream().map(DadosSite::nome).collect(Collectors.toList());
+        var quantidadeVeiculos = modeloLista.modelos().stream().count();
+        List<Veiculo> listaVeiculos = new ArrayList<>();
 
-                Veiculo dadosVeiculo = new Veiculo();
-                dadosVeiculo.setCodigoModelo(codigoVeiculo.get(i));
-                dadosVeiculo.setModelo(nomeVeiculo.get(i));
-                dadosVeiculo.setCodigoMarca(codigoMarca);
-                dadosVeiculo.setMarca(nomeMarca);
-                dadosVeiculo.setSegmento(segmento);
-                listaVeiculos.add(dadosVeiculo);
+        var codigoVeiculo = modeloLista.modelos().stream().map(DadosSite::codigo).collect(Collectors.toList());
+        var nomeVeiculo = modeloLista.modelos().stream().map(DadosSite::nome).collect(Collectors.toList());
 
-                marcaEncontrada.setVeiculos(listaVeiculos);
-                repositorio.save(marcaEncontrada);
-            }
+        for (int i = 0; i < quantidadeVeiculos; i++) {
+            Veiculo dadosVeiculo = new Veiculo();
+
+            dadosVeiculo.setCodigoModelo(codigoVeiculo.get(i));
+            dadosVeiculo.setModelo(nomeVeiculo.get(i));
+            dadosVeiculo.setCodigoMarca(codigoMarca);
+            dadosVeiculo.setMarca(nomeMarca);
+            dadosVeiculo.setSegmento(nomeSegmento);
+            listaVeiculos.add(dadosVeiculo);
+
+            marcaEncontrada.setVeiculos(listaVeiculos);
+            repositorio.save(marcaEncontrada);
         }
     }
 
@@ -173,27 +178,26 @@ public class Principal {
     }
 
     private void listarESalvarMarcasWeb() {
-        System.out.println("\nLista das marcas de veículos salvas no banco de dados: \n");
+        System.out.println("\nListando Marcas de veículos do site (fipe.org) e salvando no banco de dados: \n");
         var json = consumo.obterDados(endereco);
         List<DadosMarca> marcas = conversor.obterLista(json, DadosMarca.class);
+
         for (DadosMarca listaMarcas : marcas) {
-            try {
+            Optional<DadosMarca> buscaMarca = repositorio.findByCodigo(listaMarcas.getCodigo());
+            System.out.println("Código: " + listaMarcas.getCodigo() + " - Marca: " + listaMarcas.getMarca());
+            if (buscaMarca.isPresent()) {
+                continue;
+            } else {
                 listaMarcas.setSegmento(nomeSegmento);
-                System.out.println(listaMarcas);
                 repositorio.save(listaMarcas);
-            } catch (DataIntegrityViolationException ex) {
-                System.out.println("\nA marca " + listaMarcas.getMarca() + " já existe no banco de dados.");
             }
         }
     }
 
     private void buscarVeiculoWeb() {
         exibeMenuSegmento();
-        var json = consumo.obterDados(endereco);
-        var marcas = conversor.obterLista(json, DadosSite.class);
-        marcas.stream()
-                .sorted(Comparator.comparing(DadosSite::nome))
-                .forEach(System.out::println);
+        listarESalvarMarcasWeb();
+
 /*
         Recebe o código da marca digitado e efetua uma busca dos modelos de véiculos ordenando pelo código.
 */
@@ -202,7 +206,7 @@ public class Principal {
         json = null;
         while (json == null) {
             System.out.println("\nInforme o código da marca para consulta ou (S) para Encerrar:");
-            var codigoMarca = leitura.nextLine();
+            codigoMarca = leitura.nextLine();
             if (codigoMarca.equalsIgnoreCase("S")) {
                 System.out.println("\n*** Aplicação Encerrada ***");
                 return;
@@ -217,10 +221,18 @@ public class Principal {
                 }
             }
         }
-        var modeloLista = conversor.obterDados(json, Modelos.class);
+        modeloLista = conversor.obterDados(json, Modelos.class);
         modeloLista.modelos().stream()
                 .sorted(Comparator.comparing(DadosSite::nome))
                 .forEach(System.out::println);
+
+        Optional<DadosMarca> buscaMarca = repositorio.findByCodigo(codigoMarca);
+        if (buscaMarca.isPresent()) {
+            nomeMarca = buscaMarca.get().getMarca();
+            marcaEncontrada = buscaMarca.get();
+            insereVeiculosBancoDeDados();
+        }
+
 /*
         Efetua uma busca do veículo pelo trecho digitado e cria uma nova lista.
 */
@@ -278,6 +290,7 @@ public class Principal {
             json = consumo.obterDados(enderecoAnos);
             DadosVeiculo veiculo = conversor.obterDados(json, DadosVeiculo.class);
             veiculos.add(veiculo);
+            // AQUI ==> ATUALIZA DADOS BANCO DE DADOS (VEICULOS) COM OS PREÇOS DA FIPE CONSULTADOS
         }
         System.out.println("\nTodos os veículos filtrados com avaliações por ano: \n");
         veiculos.forEach(System.out::println);
@@ -379,7 +392,7 @@ public class Principal {
         System.out.println("Veículos " + nomeVeiculo + " com ano maior que " + anoLimite + ":");
         veiculosAno.forEach(v ->
                 System.out.println(v.getModelo() + " - Valores: " + v.getValor() + " - Ano: " + v.getAno()));
-        }
+    }
 
     private void exibeMenuSegmento() {
         var segmento = -1;
