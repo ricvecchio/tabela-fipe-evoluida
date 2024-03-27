@@ -27,6 +27,7 @@ public class Principal {
     int opcao = -1;
     String json = null;
     String endereco;
+    String enderecoBase;
     Long idMarca;
     String codigoMarca;
     String nomeMarca;
@@ -113,7 +114,6 @@ public class Principal {
                 .sorted(Comparator.comparing(DadosMarca::getMarca))
                 .forEach(System.out::println);
 
-        String enderecoBase;
         enderecoBase = endereco;
         while (json == null) {
             System.out.println("\nEscolha uma marca pelo código:");
@@ -204,7 +204,6 @@ public class Principal {
 /*
         Recebe o código da marca digitado e efetua uma busca dos modelos de véiculos ordenando pelo código.
 */
-        String enderecoBase;
         enderecoBase = endereco;
         json = null;
         while (json == null) {
@@ -240,11 +239,10 @@ public class Principal {
 /*
         Efetua uma busca da lista de anos disponíveis para o código do veiculo selecionado. Incrementando com os dados dos anos disponíveis.
 */
-        buscarListaDeAnosVeiculosWeb();
         buscarValoresPorAnoWebEAtualizaTabela();
     }
 
-    private void buscarListaDeAnosVeiculosWeb() {
+    private void buscarValoresPorAnoWebEAtualizaTabela() {
         enderecoBase = endereco;
         json = null;
         while (json == null) {
@@ -264,11 +262,13 @@ public class Principal {
                 }
             }
         }
-        List<DadosSite> anos = conversor.obterLista(json, DadosSite.class);
-        System.out.println("TESTANDO anos: " + anos);
+        atualizaValoresPorAnoBaseDeDados();
     }
 
-    private void buscarValoresPorAnoWebEAtualizaTabela() {
+    private void atualizaValoresPorAnoBaseDeDados() {
+        List<DadosSite> anos = conversor.obterLista(json, DadosSite.class);
+        System.out.println("TESTANDO anos: " + anos);
+
         List<DadosVeiculo> veiculos = new ArrayList<>();
         for (int i = 0; i < anos.size(); i++) {
             var enderecoAnos = endereco + "/" + anos.get(i).codigo();
