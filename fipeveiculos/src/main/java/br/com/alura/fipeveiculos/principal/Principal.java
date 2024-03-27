@@ -236,9 +236,6 @@ public class Principal {
         }
 
         buscarVeiculoPorTrechoNome();
-/*
-        Efetua uma busca da lista de anos disponíveis para o código do veiculo selecionado. Incrementando com os dados dos anos disponíveis.
-*/
         buscarValoresPorAnoWebEAtualizaTabela();
     }
 
@@ -267,7 +264,6 @@ public class Principal {
 
     private void atualizaValoresPorAnoBaseDeDados() {
         List<DadosSite> anos = conversor.obterLista(json, DadosSite.class);
-        System.out.println("TESTANDO anos: " + anos);
 
         List<DadosVeiculo> veiculos = new ArrayList<>();
         for (int i = 0; i < anos.size(); i++) {
