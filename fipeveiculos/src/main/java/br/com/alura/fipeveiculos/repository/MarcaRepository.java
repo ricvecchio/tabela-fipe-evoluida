@@ -38,6 +38,9 @@ public interface MarcaRepository extends JpaRepository<DadosMarca, Long> {
 
     List<DadosMarca> findByMarcaContainingIgnoreCaseAndSegmentoContainingIgnoreCase(String nomeVeiculo, String segmentoMarca);
 
+    @Query("SELECT v FROM DadosMarca m JOIN m.veiculos v WHERE v.codigoModelo = :codigoModelo")
+    Optional<Veiculo> veiculosPorCodigo(String codigoModelo);
+
     @Query("SELECT v FROM DadosMarca m JOIN m.veiculos v WHERE v.modelo ILIKE %:trechoNomeVeiculo%")
     List<Veiculo> veiculosPorTrecho(String trechoNomeVeiculo);
 

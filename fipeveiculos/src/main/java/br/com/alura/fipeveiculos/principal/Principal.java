@@ -5,6 +5,7 @@ import br.com.alura.fipeveiculos.repository.MarcaRepository;
 import br.com.alura.fipeveiculos.service.ConsultaChatGPT;
 import br.com.alura.fipeveiculos.service.ConsumoApi;
 import br.com.alura.fipeveiculos.service.ConverteDados;
+import ch.qos.logback.core.joran.spi.ElementSelector;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.*;
@@ -17,7 +18,6 @@ public class Principal {
     private ConverteDados conversor = new ConverteDados();
     private final String URL_BASE = "https://parallelum.com.br/fipe/api/v1/";
     private MarcaRepository repositorio;
-
     private List<DadosMarca> marcas = new ArrayList<>();
     private List<Veiculo> veiculos = new ArrayList<>();
     private Optional<DadosMarca> marcaBusca;
@@ -159,17 +159,21 @@ public class Principal {
         var nomeVeiculo = modeloLista.modelos().stream().map(DadosSite::nome).collect(Collectors.toList());
 
         for (int i = 0; i < quantidadeVeiculos; i++) {
-            Veiculo dadosVeiculo = new Veiculo();
 
-            dadosVeiculo.setCodigoModelo(codigoVeiculo.get(i));
-            dadosVeiculo.setModelo(nomeVeiculo.get(i));
-            dadosVeiculo.setCodigoMarca(codigoMarca);
-            dadosVeiculo.setMarca(nomeMarca);
-            dadosVeiculo.setSegmento(nomeSegmento);
-            listaVeiculos.add(dadosVeiculo);
-
-            marcaEncontrada.setVeiculos(listaVeiculos);
-            repositorio.save(marcaEncontrada);
+            Optional<Veiculo> buscaVeiculo = repositorio.veiculosPorCodigo(codigoVeiculo.get(i));
+            if (buscaVeiculo.isPresent()) {
+                continue;
+            } else {
+                Veiculo dadosVeiculo = new Veiculo();
+                dadosVeiculo.setCodigoModelo(codigoVeiculo.get(i));
+                dadosVeiculo.setModelo(nomeVeiculo.get(i));
+                dadosVeiculo.setCodigoMarca(codigoMarca);
+                dadosVeiculo.setMarca(nomeMarca);
+                dadosVeiculo.setSegmento(nomeSegmento);
+                listaVeiculos.add(dadosVeiculo);
+                marcaEncontrada.setVeiculos(listaVeiculos);
+                repositorio.save(marcaEncontrada);
+            }
         }
     }
 
@@ -177,7 +181,7 @@ public class Principal {
         repositorio.updateDetalheIa(idMarca, detalheMarca);
     }
 
-    private void listarESalvarMarcasWeb() {
+    private void listarMarcasWebESalvar() {
         System.out.println("\nListando Marcas de veículos do site (fipe.org) e salvando no banco de dados: \n");
         var json = consumo.obterDados(endereco);
         List<DadosMarca> marcas = conversor.obterLista(json, DadosMarca.class);
@@ -196,8 +200,7 @@ public class Principal {
 
     private void buscarVeiculoWeb() {
         exibeMenuSegmento();
-        listarESalvarMarcasWeb();
-
+        listarMarcasWebESalvar();
 /*
         Recebe o código da marca digitado e efetua uma busca dos modelos de véiculos ordenando pelo código.
 */
@@ -233,31 +236,7 @@ public class Principal {
             insereVeiculosBancoDeDados();
         }
 
-/*
-        Efetua uma busca do veículo pelo trecho digitado e cria uma nova lista.
-*/
-        json = null;
-        while (json == null) {
-            System.out.println("\nDigite um trecho do veículo para consulta ou (S) para Encerrar:");
-            var nomeVeiculo = leitura.nextLine();
-            if (nomeVeiculo.equalsIgnoreCase("S")) {
-                System.out.println("\n*** Aplicação Encerrada ***");
-                return;
-            } else {
-                List<DadosSite> modelosFiltrados = modeloLista.modelos().stream()
-                        .filter(m -> m.nome().toLowerCase().contains(nomeVeiculo.toLowerCase()))
-                        .sorted(Comparator.comparing(DadosSite::nome))
-                        .collect(Collectors.toList());
-                long tCount = modelosFiltrados.stream().count();
-                if (tCount == 0) {
-                    System.out.println("\nNenhum veículo encontrado com o trecho informado.");
-                } else {
-                    System.out.println("\nModelos Filtrados:\n");
-                    modelosFiltrados.forEach(System.out::println);
-                    break;
-                }
-            }
-        }
+        buscarVeiculoPorTrechoNome();
 /*
         Efetua uma busca da lista de anos disponíveis para o código do veiculo selecionado.
 */
@@ -306,7 +285,7 @@ public class Principal {
 
     private void buscarMarcasWebESalvarNaTabela() {
         exibeMenuSegmento();
-        listarESalvarMarcasWeb();
+        listarMarcasWebESalvar();
     }
 
     private void buscarDetalheMarcaChatGPT() {
@@ -344,20 +323,28 @@ public class Principal {
 
         if (marcaBusca.isPresent()) {
             System.out.println("Dados da marca: " + marcaBusca.get());
-
         } else {
             System.out.println("Marca não encontrada!");
         }
     }
 
     private void buscarVeiculoPorTrechoNome() {
-        System.out.println("Escolha o veículo pelo nome ou trecho: ");
+        System.out.println("\nDigite um trecho do veículo para consulta ou (S) para Encerrar:");
         var trechoNomeVeiculo = leitura.nextLine();
+        if (trechoNomeVeiculo.equalsIgnoreCase("S")) {
+            System.out.println("\n*** Aplicação Encerrada ***");
+            System.exit(0);
+        }
+
         List<Veiculo> veiculosEncontrados = repositorio.veiculosPorTrecho(trechoNomeVeiculo);
-        veiculosEncontrados.forEach(v ->
-                System.out.printf("Veículo: %s - Segmento: %s - Ano: %s - Valor: %s\n",
-                        v.getModelo(), v.getSegmento(),
-                        v.getAno(), v.getValor()));
+        if (veiculosEncontrados.isEmpty() == true) {
+            System.out.println("Não encontrado nenhum veículo com o trecho: " + trechoNomeVeiculo);
+            buscarVeiculoPorTrechoNome();
+        } else {
+            veiculosEncontrados.forEach(v ->
+                    System.out.printf("Código: %s - Veículo: %s - Segmento: %s - Ano: %s - Valor: %s\n",
+                            v.getCodigoModelo(), v.getModelo(), v.getSegmento(), v.getAno(), v.getValor()));
+        }
     }
 
     private void buscarMarcaPorSegmento() {
