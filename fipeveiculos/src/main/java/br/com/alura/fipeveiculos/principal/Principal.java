@@ -238,8 +238,13 @@ public class Principal {
 
         buscarVeiculoPorTrechoNome();
 /*
-        Efetua uma busca da lista de anos disponíveis para o código do veiculo selecionado.
+        Efetua uma busca da lista de anos disponíveis para o código do veiculo selecionado. Incrementando com os dados dos anos disponíveis.
 */
+        buscarListaDeAnosVeiculosWeb();
+        buscarValoresPorAnoWebEAtualizaTabela();
+    }
+
+    private void buscarListaDeAnosVeiculosWeb() {
         enderecoBase = endereco;
         json = null;
         while (json == null) {
@@ -260,9 +265,10 @@ public class Principal {
             }
         }
         List<DadosSite> anos = conversor.obterLista(json, DadosSite.class);
-/*
-        Cria uma nova lista de veículos, incrementando com os dados dos anos disponíveis.
-*/
+        System.out.println("TESTANDO anos: " + anos);
+    }
+
+    private void buscarValoresPorAnoWebEAtualizaTabela() {
         List<DadosVeiculo> veiculos = new ArrayList<>();
         for (int i = 0; i < anos.size(); i++) {
             var enderecoAnos = endereco + "/" + anos.get(i).codigo();
