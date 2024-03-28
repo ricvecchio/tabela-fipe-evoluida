@@ -33,6 +33,8 @@ public class Principal {
     String nomeMarca;
     String detalheMarca;
     String nomeSegmento;
+    String codigoModelo;
+
 
     public Principal(MarcaRepository repositorio) {
         this.repositorio = repositorio;
@@ -244,7 +246,7 @@ public class Principal {
         json = null;
         while (json == null) {
             System.out.println("\nDigite o código do modelo para buscar os valores de avaliação:");
-            var codigoModelo = leitura.nextLine();
+            codigoModelo = leitura.nextLine();
             if (codigoModelo.equalsIgnoreCase("S")) {
                 System.out.println("\n*** Aplicação Encerrada ***");
                 return;
@@ -267,11 +269,22 @@ public class Principal {
 
         List<DadosVeiculo> veiculos = new ArrayList<>();
         for (int i = 0; i < anos.size(); i++) {
+
             var enderecoAnos = endereco + "/" + anos.get(i).codigo();
             json = consumo.obterDados(enderecoAnos);
             DadosVeiculo veiculo = conversor.obterDados(json, DadosVeiculo.class);
+
             veiculos.add(veiculo);
-            // AQUI ==> ATUALIZA DADOS BANCO DE DADOS (VEICULOS) COM OS PREÇOS DA FIPE CONSULTADOS
+
+            System.out.println("TESTANDO codigoModelo = " + codigoModelo);
+            System.out.println("TESTANDO ano = " + veiculo.ano());
+            System.out.println("TESTANDO valor = " + veiculo.valor());
+            System.out.println("TESTANDO combustivel = " + veiculo.combustivel());
+
+            //AQUIII - ACRESCENTAR TODOS CAMPOS NO UPDATE
+
+            repositorio.atualizaDadosVeiculo(codigoModelo, veiculo.valor());
+//            repositorio.atualizaDadosVeiculo(codigoModelo, veiculo.ano(), Double.valueOf(veiculo.valor()), veiculo.combustivel());
         }
         System.out.println("\nTodos os veículos filtrados com avaliações por ano: \n");
         veiculos.forEach(System.out::println);
@@ -364,7 +377,7 @@ public class Principal {
         System.out.println("Qual o veículo para busca?");
         var nomeVeiculo = leitura.nextLine();
         System.out.println("Qual o valor máximo do veículo?");
-        var valorVeiculo = leitura.nextDouble();
+        var valorVeiculo = leitura.nextLine();
         List<Veiculo> veiculosEncontrados = repositorio.veiculosPorValores(nomeVeiculo, valorVeiculo);
         System.out.println("Veículos " + nomeVeiculo + " com valores menores que " + valorVeiculo);
         veiculosEncontrados.forEach(v ->

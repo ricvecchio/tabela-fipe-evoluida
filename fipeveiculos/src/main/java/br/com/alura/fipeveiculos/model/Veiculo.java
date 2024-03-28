@@ -22,7 +22,7 @@ public class Veiculo {
     @JsonAlias("AnoModelo")
     public Integer ano;
     @JsonAlias("Valor")
-    public Double valor;
+    public String valor;
     @JsonAlias("Combustivel")
     public String combustivel;
     @JsonAlias("Segmento")
@@ -67,11 +67,11 @@ public class Veiculo {
         this.ano = ano;
     }
 
-    public Double getValor() {
+    public String getValor() {
         return valor;
     }
 
-    public void setValor(Double valor) {
+    public void setValor(String valor) {
         this.valor = valor;
     }
 
