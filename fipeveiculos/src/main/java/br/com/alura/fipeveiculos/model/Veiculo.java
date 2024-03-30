@@ -33,8 +33,17 @@ public class Veiculo {
     private String codigoMarca;
     @JsonAlias("Marca")
     public String marca;
+
+    public String getDataAtualizacao() {
+        return dataAtualizacao;
+    }
+
+    public void setDataAtualizacao(String dataAtualizacao) {
+        this.dataAtualizacao = dataAtualizacao;
+    }
+
     @JsonAlias("DataAtualizacao")
-    public LocalDate DataAtualizacao;
+    public String dataAtualizacao;
 
     @ManyToOne
     private DadosMarca dadosMarca;

@@ -8,8 +8,13 @@ import br.com.alura.fipeveiculos.service.ConverteDados;
 import ch.qos.logback.core.joran.spi.ElementSelector;
 import org.hibernate.tool.schema.internal.exec.ScriptTargetOutputToFile;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -296,6 +301,11 @@ public class Principal {
             dadosVeiculo.setAno(veiculo.ano());
             dadosVeiculo.setValor(veiculo.valor());
             dadosVeiculo.setCombustivel(veiculo.combustivel());
+
+            Date dataHoraSistema = new Date();
+            String formatoDataHora = "dd/MM/yyyy a hh:mm:ss";
+            SimpleDateFormat dataHoraFormatada = new SimpleDateFormat(formatoDataHora);
+            dadosVeiculo.setDataAtualizacao(dataHoraFormatada.format(dataHoraSistema));
 
             listaVeiculos.add(dadosVeiculo);
 
