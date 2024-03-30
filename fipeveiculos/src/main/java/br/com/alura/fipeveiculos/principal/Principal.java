@@ -6,8 +6,11 @@ import br.com.alura.fipeveiculos.service.ConsultaChatGPT;
 import br.com.alura.fipeveiculos.service.ConsumoApi;
 import br.com.alura.fipeveiculos.service.ConverteDados;
 import ch.qos.logback.core.joran.spi.ElementSelector;
+import org.hibernate.tool.schema.internal.exec.ScriptTargetOutputToFile;
 import org.springframework.dao.DataIntegrityViolationException;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -34,6 +37,7 @@ public class Principal {
     String detalheMarca;
     String nomeSegmento;
     String codigoModelo;
+    String veiculoEncontrado;
 
 
     public Principal(MarcaRepository repositorio) {
@@ -161,17 +165,17 @@ public class Principal {
         var nomeVeiculo = modeloLista.modelos().stream().map(DadosSite::nome).collect(Collectors.toList());
 
         for (int i = 0; i < quantidadeVeiculos; i++) {
+            List<Veiculo> buscaVeiculo = repositorio.veiculosPorCodigo(codigoVeiculo.get(i));
 
-            Optional<Veiculo> buscaVeiculo = repositorio.veiculosPorCodigo(codigoVeiculo.get(i));
-            if (buscaVeiculo.isPresent()) {
-                continue;
-            } else {
+            if (buscaVeiculo.isEmpty() == true) {
+
                 Veiculo dadosVeiculo = new Veiculo();
                 dadosVeiculo.setCodigoModelo(codigoVeiculo.get(i));
                 dadosVeiculo.setModelo(nomeVeiculo.get(i));
                 dadosVeiculo.setCodigoMarca(codigoMarca);
                 dadosVeiculo.setMarca(nomeMarca);
                 dadosVeiculo.setSegmento(nomeSegmento);
+
                 listaVeiculos.add(dadosVeiculo);
                 marcaEncontrada.setVeiculos(listaVeiculos);
                 repositorio.save(marcaEncontrada);
@@ -186,6 +190,7 @@ public class Principal {
     private void listarMarcasWebESalvar() {
         System.out.println("\nListando Marcas de veículos do site (fipe.org) e salvando no banco de dados: \n");
         var json = consumo.obterDados(endereco);
+
         List<DadosMarca> marcas = conversor.obterLista(json, DadosMarca.class);
 
         for (DadosMarca listaMarcas : marcas) {
@@ -234,11 +239,10 @@ public class Principal {
         if (buscaMarca.isPresent()) {
             nomeMarca = buscaMarca.get().getMarca();
             marcaEncontrada = buscaMarca.get();
-            insereVeiculosBancoDeDados();
+//            insereVeiculosBancoDeDados();
+            buscarValoresPorAnoWebEAtualizaTabela();
         }
-
-        buscarVeiculoPorTrechoNome();
-        buscarValoresPorAnoWebEAtualizaTabela();
+//        buscarValoresPorAnoWebEAtualizaTabela();
     }
 
     private void buscarValoresPorAnoWebEAtualizaTabela() {
@@ -261,30 +265,53 @@ public class Principal {
                 }
             }
         }
-        atualizaValoresPorAnoBaseDeDados();
+        incluiListaVeiculosPorAnoFipe();
     }
 
-    private void atualizaValoresPorAnoBaseDeDados() {
+    private void incluiListaVeiculosPorAnoFipe() {
+
+//        try {
+//            this.dataLancamento = LocalDate.parse(dadosEpisodio.dataLancamento());
+//        } catch (DateTimeParseException ex) {
+//            this.dataLancamento = null;
+//        }
         List<DadosSite> anos = conversor.obterLista(json, DadosSite.class);
+        List<Veiculo> listaVeiculos = new ArrayList<>();
 
         List<DadosVeiculo> veiculos = new ArrayList<>();
         for (int i = 0; i < anos.size(); i++) {
 
             var enderecoAnos = endereco + "/" + anos.get(i).codigo();
             json = consumo.obterDados(enderecoAnos);
-            DadosVeiculo veiculo = conversor.obterDados(json, DadosVeiculo.class);
 
+            DadosVeiculo veiculo = conversor.obterDados(json, DadosVeiculo.class);
             veiculos.add(veiculo);
 
+            Veiculo dadosVeiculo = new Veiculo();
+            dadosVeiculo.setCodigoModelo(codigoModelo);
+            dadosVeiculo.setCodigoMarca(codigoMarca);
+            dadosVeiculo.setMarca(nomeMarca);
+            dadosVeiculo.setSegmento(nomeSegmento);
+            dadosVeiculo.setModelo(veiculo.modelo());
+            dadosVeiculo.setAno(veiculo.ano());
+            dadosVeiculo.setValor(veiculo.valor());
+            dadosVeiculo.setCombustivel(veiculo.combustivel());
+
+            listaVeiculos.add(dadosVeiculo);
+
+            List<Veiculo> veiculoEncontrado = repositorio.veiculosPorCodigoEAno(codigoModelo, veiculo.ano());
+            System.out.println("TESTANDO veiculoEncontrado = " + veiculoEncontrado);
             System.out.println("TESTANDO codigoModelo = " + codigoModelo);
-            System.out.println("TESTANDO ano = " + veiculo.ano());
-            System.out.println("TESTANDO valor = " + veiculo.valor());
-            System.out.println("TESTANDO combustivel = " + veiculo.combustivel());
+            System.out.println("TESTANDO veiculo.ano = " + veiculo.ano());
 
-            //AQUIII - ACRESCENTAR TODOS CAMPOS NO UPDATE
-
-            repositorio.atualizaDadosVeiculo(codigoModelo, veiculo.valor());
-//            repositorio.atualizaDadosVeiculo(codigoModelo, veiculo.ano(), Double.valueOf(veiculo.valor()), veiculo.combustivel());
+            if (veiculoEncontrado.isEmpty() == true) {
+                System.out.println("TESTANDO veiculoEncontrado.isEmpty Entrou 01 = " + veiculoEncontrado.isEmpty());
+                marcaEncontrada.setVeiculos(listaVeiculos);
+                repositorio.save(marcaEncontrada);
+            } else {
+                System.out.println("TESTANDO veiculoEncontrado.isEmpty Entrou 02 = " + veiculoEncontrado.isEmpty());
+                repositorio.atualizaDadosVeiculo(codigoModelo, veiculo.ano(), veiculo.valor(), veiculo.combustivel());
+            }
         }
         System.out.println("\nTodos os veículos filtrados com avaliações por ano: \n");
         veiculos.forEach(System.out::println);
@@ -352,6 +379,7 @@ public class Principal {
         }
 
         List<Veiculo> veiculosEncontrados = repositorio.veiculosPorTrecho(trechoNomeVeiculo);
+        System.out.println("TESTANDO veiculosEncontrados = " + veiculosEncontrados);
         if (veiculosEncontrados.isEmpty() == true) {
             System.out.println("Não encontrado nenhum veículo com o trecho: " + trechoNomeVeiculo);
             buscarVeiculoPorTrechoNome();
@@ -370,7 +398,6 @@ public class Principal {
         List<DadosMarca> marcasEncontradas = repositorio.findByMarcaContainingIgnoreCaseAndSegmentoContainingIgnoreCase(nomeMarca, segmentoMarca);
         marcasEncontradas.forEach(m ->
                 System.out.println("Marcas: " + m.getMarca() + " Segmento: " + m.getSegmento()));
-
     }
 
     private void buscarVeiculoPorValor() {

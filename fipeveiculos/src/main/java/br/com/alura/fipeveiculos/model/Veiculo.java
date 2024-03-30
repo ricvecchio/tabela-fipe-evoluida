@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.LocalDate;
+
 @Entity
 @Table(name = "veiculos")
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -31,6 +33,8 @@ public class Veiculo {
     private String codigoMarca;
     @JsonAlias("Marca")
     public String marca;
+    @JsonAlias("DataAtualizacao")
+    public LocalDate DataAtualizacao;
 
     @ManyToOne
     private DadosMarca dadosMarca;

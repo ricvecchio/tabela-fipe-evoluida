@@ -30,13 +30,8 @@ public interface MarcaRepository extends JpaRepository<DadosMarca, Long> {
 
     @Modifying
     @Transactional
-    @Query(value="UPDATE Veiculos SET valor=:valorVeiculo WHERE codigo_modelo=:codigoModelo", nativeQuery=true)
-    public void atualizaDadosVeiculo(String codigoModelo, String valorVeiculo);
-
-//    @Query("UPDATE DadosMarca m JOIN m.veiculos SET v.ano=:anoVeiculo, v.valor=:valorVeiculo, v.combustivel=:combustivel v WHERE v.codigoModelo=:codigoModelo")
-//    @Query("UPDATE DadosMarca v SET v.valor=:valorVeiculo JOIN m.veiculos v WHERE v.codigoModelo=:codigoModelo")
-//    public void atualizaDadosVeiculo(@Param("codigoModelo") String codigoModelo, @Param("ano") Integer anoVeiculo, @Param("valor") Double valorVeiculo, @Param("combustivel") String combustivel);
-
+    @Query(value="UPDATE Veiculos SET valor=:valorVeiculo, ano=:anoVeiculo, combustivel=:combustivel WHERE codigo_modelo=:codigoModelo", nativeQuery=true)
+    public void atualizaDadosVeiculo(String codigoModelo, Integer anoVeiculo, String valorVeiculo, String combustivel);
 
     Optional<DadosMarca> findByCodigo(String codigoMarca);
 
@@ -45,8 +40,10 @@ public interface MarcaRepository extends JpaRepository<DadosMarca, Long> {
     List<DadosMarca> findByMarcaContainingIgnoreCaseAndSegmentoContainingIgnoreCase(String nomeVeiculo, String segmentoMarca);
 
     @Query("SELECT v FROM DadosMarca m JOIN m.veiculos v WHERE v.codigoModelo = :codigoModelo")
-    Optional<Veiculo> veiculosPorCodigo(String codigoModelo);
+    List<Veiculo> veiculosPorCodigo(String codigoModelo);
 
+    @Query("SELECT v FROM DadosMarca m JOIN m.veiculos v WHERE v.codigoModelo = :codigoModelo AND v.ano=:ano")
+    List<Veiculo> veiculosPorCodigoEAno(String codigoModelo, Integer ano);
     @Query("SELECT v FROM DadosMarca m JOIN m.veiculos v WHERE v.modelo ILIKE %:trechoNomeVeiculo%")
     List<Veiculo> veiculosPorTrecho(String trechoNomeVeiculo);
 
