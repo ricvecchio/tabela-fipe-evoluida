@@ -33,15 +33,6 @@ public class Veiculo {
     private String codigoMarca;
     @JsonAlias("Marca")
     public String marca;
-
-    public String getDataAtualizacao() {
-        return dataAtualizacao;
-    }
-
-    public void setDataAtualizacao(String dataAtualizacao) {
-        this.dataAtualizacao = dataAtualizacao;
-    }
-
     @JsonAlias("DataAtualizacao")
     public String dataAtualizacao;
 
@@ -124,6 +115,14 @@ public class Veiculo {
 
     public void setDadosMarca(DadosMarca dadosMarca) {
         this.dadosMarca = dadosMarca;
+    }
+
+    public String getDataAtualizacao() {
+        return dataAtualizacao;
+    }
+
+    public void setDataAtualizacao(String dataAtualizacao) {
+        this.dataAtualizacao = dataAtualizacao;
     }
 
     @Override

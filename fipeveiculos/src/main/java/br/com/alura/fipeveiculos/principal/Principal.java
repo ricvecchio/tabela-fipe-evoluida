@@ -320,7 +320,7 @@ public class Principal {
                 repositorio.save(marcaEncontrada);
             } else {
                 System.out.println("TESTANDO veiculoEncontrado.isEmpty Entrou 02 = " + veiculoEncontrado.isEmpty());
-                repositorio.atualizaDadosVeiculo(codigoModelo, veiculo.ano(), veiculo.valor(), veiculo.combustivel());
+                repositorio.atualizaDadosVeiculo(codigoModelo, veiculo.ano(), veiculo.valor(), veiculo.combustivel(), dadosVeiculo.getDataAtualizacao());
             }
         }
         System.out.println("\nTodos os veículos filtrados com avaliações por ano: \n");

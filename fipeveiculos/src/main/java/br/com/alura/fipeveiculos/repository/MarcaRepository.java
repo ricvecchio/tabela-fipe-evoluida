@@ -30,8 +30,8 @@ public interface MarcaRepository extends JpaRepository<DadosMarca, Long> {
 
     @Modifying
     @Transactional
-    @Query(value="UPDATE Veiculos SET valor=:valorVeiculo, ano=:anoVeiculo, combustivel=:combustivel WHERE codigo_modelo=:codigoModelo", nativeQuery=true)
-    public void atualizaDadosVeiculo(String codigoModelo, Integer anoVeiculo, String valorVeiculo, String combustivel);
+    @Query(value="UPDATE Veiculos SET valor=:valorVeiculo, ano=:anoVeiculo, combustivel=:combustivel, dataatualizacao=:dataAtualizacao WHERE codigo_modelo=:codigoModelo", nativeQuery=true)
+    public void atualizaDadosVeiculo(String codigoModelo, Integer anoVeiculo, String valorVeiculo, String combustivel, String dataAtualizacao);
 
     Optional<DadosMarca> findByCodigo(String codigoMarca);
 
