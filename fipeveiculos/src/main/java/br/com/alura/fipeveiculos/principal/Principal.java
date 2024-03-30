@@ -275,11 +275,6 @@ public class Principal {
 
     private void incluiListaVeiculosPorAnoFipe() {
 
-//        try {
-//            this.dataLancamento = LocalDate.parse(dadosEpisodio.dataLancamento());
-//        } catch (DateTimeParseException ex) {
-//            this.dataLancamento = null;
-//        }
         List<DadosSite> anos = conversor.obterLista(json, DadosSite.class);
         List<Veiculo> listaVeiculos = new ArrayList<>();
 
