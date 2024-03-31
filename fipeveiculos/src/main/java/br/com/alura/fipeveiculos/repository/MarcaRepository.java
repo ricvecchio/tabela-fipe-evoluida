@@ -39,19 +39,19 @@ public interface MarcaRepository extends JpaRepository<DadosMarca, Long> {
 
     List<DadosMarca> findByMarcaContainingIgnoreCaseAndSegmentoContainingIgnoreCase(String nomeVeiculo, String segmentoMarca);
 
-    @Query("SELECT v FROM DadosMarca m JOIN m.veiculos v WHERE v.codigoModelo = :codigoModelo")
+    @Query("SELECT v FROM DadosMarca m JOIN m.veiculos v WHERE v.codigoModelo=:codigoModelo")
     List<Veiculo> veiculosPorCodigo(String codigoModelo);
 
-    @Query("SELECT v FROM DadosMarca m JOIN m.veiculos v WHERE v.codigoModelo = :codigoModelo AND v.ano=:ano")
+    @Query("SELECT v FROM DadosMarca m JOIN m.veiculos v WHERE v.codigoModelo=:codigoModelo AND v.ano=:ano")
     List<Veiculo> veiculosPorCodigoEAno(String codigoModelo, Integer ano);
 
     @Query("SELECT v FROM DadosMarca m JOIN m.veiculos v WHERE v.modelo ILIKE %:trechoNomeVeiculo%")
     List<Veiculo> veiculosPorTrecho(String trechoNomeVeiculo);
 
-    @Query("SELECT v FROM DadosMarca m JOIN m.veiculos v WHERE v.modelo ILIKE %:nomeVeiculo% AND v.valor <= :valorVeiculo")
+    @Query("SELECT v FROM DadosMarca m JOIN m.veiculos v WHERE v.modelo ILIKE %:nomeVeiculo% AND v.valor<=:valorVeiculo")
     List<Veiculo> veiculosPorValores(String nomeVeiculo, String valorVeiculo);
 
-    @Query("SELECT v FROM DadosMarca m JOIN m.veiculos v WHERE v.modelo ILIKE %:nomeVeiculo% AND v.ano >= :anoLimite")
+    @Query("SELECT v FROM DadosMarca m JOIN m.veiculos v WHERE v.modelo ILIKE %:nomeVeiculo% AND v.ano>=:anoLimite")
     List<Veiculo> veiculosPorAno(String nomeVeiculo, int anoLimite);
 
 }

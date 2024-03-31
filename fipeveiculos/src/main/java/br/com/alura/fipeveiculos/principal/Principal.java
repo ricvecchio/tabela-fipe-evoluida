@@ -244,13 +244,12 @@ public class Principal {
         if (buscaMarca.isPresent()) {
             nomeMarca = buscaMarca.get().getMarca();
             marcaEncontrada = buscaMarca.get();
-//            insereVeiculosBancoDeDados();
-            buscarValoresPorAnoWebEAtualizaTabela();
+            montaUrlEnderecoAnos();
+            buscarValoresAnosFipeEIncluiOuAtualizaTabela();
         }
-//        buscarValoresPorAnoWebEAtualizaTabela();
     }
 
-    private void buscarValoresPorAnoWebEAtualizaTabela() {
+    private void montaUrlEnderecoAnos() {
         enderecoBase = endereco;
         json = null;
         while (json == null) {
@@ -270,10 +269,9 @@ public class Principal {
                 }
             }
         }
-        incluiListaVeiculosPorAnoFipe();
     }
 
-    private void incluiListaVeiculosPorAnoFipe() {
+    private void buscarValoresAnosFipeEIncluiOuAtualizaTabela() {
 
         List<DadosSite> anos = conversor.obterLista(json, DadosSite.class);
         List<Veiculo> listaVeiculos = new ArrayList<>();
@@ -384,7 +382,6 @@ public class Principal {
         }
 
         List<Veiculo> veiculosEncontrados = repositorio.veiculosPorTrecho(trechoNomeVeiculo);
-        System.out.println("TESTANDO veiculosEncontrados = " + veiculosEncontrados);
         if (veiculosEncontrados.isEmpty() == true) {
             System.out.println("Não encontrado nenhum veículo com o trecho: " + trechoNomeVeiculo);
             buscarVeiculoPorTrechoNome();
