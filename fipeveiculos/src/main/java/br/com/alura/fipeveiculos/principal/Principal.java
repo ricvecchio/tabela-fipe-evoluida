@@ -302,18 +302,18 @@ public class Principal {
 
             listaVeiculos.add(dadosVeiculo);
 
-            List<Veiculo> veiculoEncontrado = repositorio.veiculosPorCodigoEAno(codigoModelo, veiculo.ano());
-            System.out.println("TESTANDO veiculoEncontrado = " + veiculoEncontrado);
             System.out.println("TESTANDO codigoModelo = " + codigoModelo);
             System.out.println("TESTANDO veiculo.ano = " + veiculo.ano());
+            Optional<Veiculo> veiculoEncontrado = repositorio.veiculosPorCodigoEAno(codigoModelo, veiculo.ano());
+            System.out.println("TESTANDO veiculoEncontrado = " + veiculoEncontrado);
 
-            if (veiculoEncontrado.isEmpty() == true) {
-                System.out.println("TESTANDO veiculoEncontrado.isEmpty Entrou 01 = " + veiculoEncontrado.isEmpty());
+            if (veiculoEncontrado.isPresent()) {
+                System.out.println("TESTANDO veiculoEncontrado.isPresent ATUALIZA = " + veiculoEncontrado.isPresent());
+                repositorio.atualizaDadosVeiculo(codigoModelo, veiculo.ano(), veiculo.valor(), veiculo.combustivel(), dadosVeiculo.getDataAtualizacao());
+            } else {
+                System.out.println("TESTANDO veiculoEncontrado.isPresent INSERE = " + veiculoEncontrado.isPresent());
                 marcaEncontrada.setVeiculos(listaVeiculos);
                 repositorio.save(marcaEncontrada);
-            } else {
-                System.out.println("TESTANDO veiculoEncontrado.isEmpty Entrou 02 = " + veiculoEncontrado.isEmpty());
-                repositorio.atualizaDadosVeiculo(codigoModelo, veiculo.ano(), veiculo.valor(), veiculo.combustivel(), dadosVeiculo.getDataAtualizacao());
             }
         }
         System.out.println("\nTodos os veículos filtrados com avaliações por ano: \n");

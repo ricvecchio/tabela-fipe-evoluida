@@ -43,7 +43,7 @@ public interface MarcaRepository extends JpaRepository<DadosMarca, Long> {
     List<Veiculo> veiculosPorCodigo(String codigoModelo);
 
     @Query("SELECT v FROM DadosMarca m JOIN m.veiculos v WHERE v.codigoModelo=:codigoModelo AND v.ano=:ano")
-    List<Veiculo> veiculosPorCodigoEAno(String codigoModelo, Integer ano);
+    Optional<Veiculo> veiculosPorCodigoEAno(String codigoModelo, Integer ano);
 
     @Query("SELECT v FROM DadosMarca m JOIN m.veiculos v WHERE v.modelo ILIKE %:trechoNomeVeiculo%")
     List<Veiculo> veiculosPorTrecho(String trechoNomeVeiculo);
