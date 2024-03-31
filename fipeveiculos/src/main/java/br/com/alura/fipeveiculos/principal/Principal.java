@@ -283,6 +283,8 @@ public class Principal {
             json = consumo.obterDados(enderecoAnos);
 
             DadosVeiculo veiculo = conversor.obterDados(json, DadosVeiculo.class);
+            System.out.println("TESTANDO veiculo = " + veiculo);
+
             veiculos.add(veiculo);
 
             Veiculo dadosVeiculo = new Veiculo();
@@ -304,14 +306,17 @@ public class Principal {
 
             System.out.println("TESTANDO codigoModelo = " + codigoModelo);
             System.out.println("TESTANDO veiculo.ano = " + veiculo.ano());
-            Optional<Veiculo> veiculoEncontrado = repositorio.veiculosPorCodigoEAno(codigoModelo, veiculo.ano());
-            System.out.println("TESTANDO veiculoEncontrado = " + veiculoEncontrado);
+//            Optional<Veiculo> veiculoEncontrado = repositorio.veiculosPorCodigoEAno(codigoModelo, veiculo.ano());
+            Long veiculoEncontrado = repositorio.veiculosPorCodigoEAno(codigoModelo, veiculo.ano());
 
-            if (veiculoEncontrado.isPresent()) {
-                System.out.println("TESTANDO veiculoEncontrado.isPresent ATUALIZA = " + veiculoEncontrado.isPresent());
+            if (veiculoEncontrado > 0 ) {
+//                if (veiculoEncontrado.isPresent()) {
+//                System.out.println("TESTANDO veiculoEncontrado.isPresent ATUALIZA = " + veiculoEncontrado.isPresent());
+                System.out.println("TESTANDO veiculoEncontrado.isPresent ATUALIZA = " + veiculoEncontrado);
                 repositorio.atualizaDadosVeiculo(codigoModelo, veiculo.ano(), veiculo.valor(), veiculo.combustivel(), dadosVeiculo.getDataAtualizacao());
             } else {
-                System.out.println("TESTANDO veiculoEncontrado.isPresent INSERE = " + veiculoEncontrado.isPresent());
+//                System.out.println("TESTANDO veiculoEncontrado.isPresent INSERE = " + veiculoEncontrado.isPresent());
+                System.out.println("TESTANDO veiculoEncontrado.isPresent INSERE = " + veiculoEncontrado);
                 marcaEncontrada.setVeiculos(listaVeiculos);
                 repositorio.save(marcaEncontrada);
             }
