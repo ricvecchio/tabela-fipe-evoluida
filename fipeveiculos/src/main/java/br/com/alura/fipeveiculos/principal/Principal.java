@@ -253,7 +253,7 @@ public class Principal {
         enderecoBase = endereco;
         json = null;
         while (json == null) {
-            System.out.println("\nDigite o código do modelo para buscar os valores de avaliação:");
+            System.out.println("\nDigite o código do modelo para buscar os valores Fipe:");
             codigoModelo = leitura.nextLine();
             if (codigoModelo.equalsIgnoreCase("S")) {
                 System.out.println("\n*** Aplicação Encerrada ***");
@@ -312,11 +312,11 @@ public class Principal {
             if (veiculoEncontrado > 0 ) {
 //                if (veiculoEncontrado.isPresent()) {
 //                System.out.println("TESTANDO veiculoEncontrado.isPresent ATUALIZA = " + veiculoEncontrado.isPresent());
-                System.out.println("TESTANDO veiculoEncontrado.isPresent ATUALIZA = " + veiculoEncontrado);
+                System.out.println("TESTANDO veiculoEncontrado (count) ATUALIZA = " + veiculoEncontrado);
                 repositorio.atualizaDadosVeiculo(codigoModelo, veiculo.ano(), veiculo.valor(), veiculo.combustivel(), dadosVeiculo.getDataAtualizacao());
             } else {
 //                System.out.println("TESTANDO veiculoEncontrado.isPresent INSERE = " + veiculoEncontrado.isPresent());
-                System.out.println("TESTANDO veiculoEncontrado.isPresent INSERE = " + veiculoEncontrado);
+                System.out.println("TESTANDO veiculoEncontrado (count) INSERE = " + veiculoEncontrado);
                 marcaEncontrada.setVeiculos(listaVeiculos);
                 repositorio.save(marcaEncontrada);
             }
