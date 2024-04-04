@@ -313,7 +313,7 @@ public class Principal {
             listaVeiculos.add(dadosVeiculo);
 
             System.out.println("TESTANDO codigoModelo = " + codigoModelo);
-            System.out.println("TESTANDO veiculo.ano = " +veiculos.get(y).ano());
+            System.out.println("TESTANDO veiculos.get(y).ano() = " + veiculos.get(y).ano());
             Long veiculoEncontrado = repositorio.veiculosPorCodigoEAno(codigoModelo, veiculos.get(y).ano());
 
             if (veiculoEncontrado > 0) {
