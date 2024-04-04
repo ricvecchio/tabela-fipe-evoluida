@@ -275,8 +275,9 @@ public class Principal {
 
         List<DadosSite> anos = conversor.obterLista(json, DadosSite.class);
         List<Veiculo> listaVeiculos = new ArrayList<>();
-
         List<DadosVeiculo> veiculos = new ArrayList<>();
+        Veiculo dadosVeiculo = new Veiculo();
+
         for (int i = 0; i < anos.size(); i++) {
 
             var enderecoAnos = endereco + "/" + anos.get(i).codigo();
@@ -286,41 +287,45 @@ public class Principal {
             System.out.println("TESTANDO veiculo = " + veiculo);
 
             veiculos.add(veiculo);
+        }
 
-            Veiculo dadosVeiculo = new Veiculo();
+        System.out.println("TESTANDO veiculos = " + veiculos);
+        System.out.println("TESTANDO veiculos.size() = " + veiculos.size());
+
+        for (int y = 0; y < veiculos.size(); y++) {
+            System.out.println("TESTANDO ENTROU FOR Y: " + y);
+
             dadosVeiculo.setCodigoModelo(codigoModelo);
             dadosVeiculo.setCodigoMarca(codigoMarca);
             dadosVeiculo.setMarca(nomeMarca);
             dadosVeiculo.setSegmento(nomeSegmento);
-            dadosVeiculo.setModelo(veiculo.modelo());
-            dadosVeiculo.setAno(veiculo.ano());
-            dadosVeiculo.setValor(veiculo.valor());
-            dadosVeiculo.setCombustivel(veiculo.combustivel());
+            dadosVeiculo.setModelo(veiculos.get(y).modelo());
+            dadosVeiculo.setAno(veiculos.get(y).ano());
+            dadosVeiculo.setValor(veiculos.get(y).valor());
+            dadosVeiculo.setCombustivel(veiculos.get(y).combustivel());
 
             Date dataHoraSistema = new Date();
             String formatoDataHora = "dd/MM/yyyy a hh:mm:ss";
             SimpleDateFormat dataHoraFormatada = new SimpleDateFormat(formatoDataHora);
             dadosVeiculo.setDataAtualizacao(dataHoraFormatada.format(dataHoraSistema));
 
+            System.out.println("TESTANDO dadosVeiculo = " + dadosVeiculo);
             listaVeiculos.add(dadosVeiculo);
 
             System.out.println("TESTANDO codigoModelo = " + codigoModelo);
-            System.out.println("TESTANDO veiculo.ano = " + veiculo.ano());
-//            Optional<Veiculo> veiculoEncontrado = repositorio.veiculosPorCodigoEAno(codigoModelo, veiculo.ano());
-            Long veiculoEncontrado = repositorio.veiculosPorCodigoEAno(codigoModelo, veiculo.ano());
+            System.out.println("TESTANDO veiculo.ano = " +veiculos.get(y).ano());
+            Long veiculoEncontrado = repositorio.veiculosPorCodigoEAno(codigoModelo, veiculos.get(y).ano());
 
-            if (veiculoEncontrado > 0 ) {
-//                if (veiculoEncontrado.isPresent()) {
-//                System.out.println("TESTANDO veiculoEncontrado.isPresent ATUALIZA = " + veiculoEncontrado.isPresent());
+            if (veiculoEncontrado > 0) {
                 System.out.println("TESTANDO veiculoEncontrado (count) ATUALIZA = " + veiculoEncontrado);
-                repositorio.atualizaDadosVeiculo(codigoModelo, veiculo.ano(), veiculo.valor(), veiculo.combustivel(), dadosVeiculo.getDataAtualizacao());
+                repositorio.atualizaDadosVeiculo(codigoModelo, veiculos.get(y).ano(), veiculos.get(y).valor(), veiculos.get(y).combustivel(), dadosVeiculo.getDataAtualizacao());
             } else {
-//                System.out.println("TESTANDO veiculoEncontrado.isPresent INSERE = " + veiculoEncontrado.isPresent());
                 System.out.println("TESTANDO veiculoEncontrado (count) INSERE = " + veiculoEncontrado);
                 marcaEncontrada.setVeiculos(listaVeiculos);
                 repositorio.save(marcaEncontrada);
             }
         }
+
         System.out.println("\nTodos os veículos filtrados com avaliações por ano: \n");
 //        veiculos.forEach(System.out::println);
         listaVeiculos.forEach(v ->
