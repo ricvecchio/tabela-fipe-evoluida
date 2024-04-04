@@ -322,7 +322,10 @@ public class Principal {
             }
         }
         System.out.println("\nTodos os veículos filtrados com avaliações por ano: \n");
-        veiculos.forEach(System.out::println);
+//        veiculos.forEach(System.out::println);
+        listaVeiculos.forEach(v ->
+                System.out.printf("Ano=%s, Valor=%s, Código=%s, Modelo=%s, Combustível=%s, Marca: %s\n",
+                        v.getAno(), v.getValor(), v.getCodigoModelo(), v.getModelo(), v.combustivel, v.marca));
     }
 
     private void buscarVeiculoChatGPT() {
