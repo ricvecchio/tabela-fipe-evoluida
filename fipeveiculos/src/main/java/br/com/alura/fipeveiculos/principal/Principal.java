@@ -274,9 +274,7 @@ public class Principal {
     private void buscarValoresAnosFipeEIncluiOuAtualizaTabela() {
 
         List<DadosSite> anos = conversor.obterLista(json, DadosSite.class);
-        List<Veiculo> listaVeiculos = new ArrayList<>();
         List<DadosVeiculo> veiculos = new ArrayList<>();
-        Veiculo dadosVeiculo = new Veiculo();
 
         for (int i = 0; i < anos.size(); i++) {
 
@@ -289,12 +287,12 @@ public class Principal {
             veiculos.add(veiculo);
         }
 
-        System.out.println("TESTANDO veiculos = " + veiculos);
-        System.out.println("TESTANDO veiculos.size() = " + veiculos.size());
+        List<Veiculo> listaVeiculos = new ArrayList<>();
 
         for (int y = 0; y < veiculos.size(); y++) {
             System.out.println("TESTANDO ENTROU FOR Y: " + y);
 
+            Veiculo dadosVeiculo = new Veiculo();
             dadosVeiculo.setCodigoModelo(codigoModelo);
             dadosVeiculo.setCodigoMarca(codigoMarca);
             dadosVeiculo.setMarca(nomeMarca);
@@ -309,7 +307,6 @@ public class Principal {
             SimpleDateFormat dataHoraFormatada = new SimpleDateFormat(formatoDataHora);
             dadosVeiculo.setDataAtualizacao(dataHoraFormatada.format(dataHoraSistema));
 
-            System.out.println("TESTANDO dadosVeiculo = " + dadosVeiculo);
             listaVeiculos.add(dadosVeiculo);
 
             System.out.println("TESTANDO codigoModelo = " + codigoModelo);
@@ -318,16 +315,14 @@ public class Principal {
 
             if (veiculoEncontrado > 0) {
                 System.out.println("TESTANDO veiculoEncontrado (count) ATUALIZA = " + veiculoEncontrado);
-                repositorio.atualizaDadosVeiculo(codigoModelo, veiculos.get(y).ano(), veiculos.get(y).valor(), veiculos.get(y).combustivel(), dadosVeiculo.getDataAtualizacao());
+                repositorio.atualizaDadosVeiculo(codigoModelo, veiculos.get(y).ano(), veiculos.get(y).valor(), dadosVeiculo.getDataAtualizacao());
             } else {
                 System.out.println("TESTANDO veiculoEncontrado (count) INSERE = " + veiculoEncontrado);
                 marcaEncontrada.setVeiculos(listaVeiculos);
                 repositorio.save(marcaEncontrada);
             }
         }
-
         System.out.println("\nTodos os veículos filtrados com avaliações por ano: \n");
-//        veiculos.forEach(System.out::println);
         listaVeiculos.forEach(v ->
                 System.out.printf("Ano=%s, Valor=%s, Código=%s, Modelo=%s, Combustível=%s, Marca: %s\n",
                         v.getAno(), v.getValor(), v.getCodigoModelo(), v.getModelo(), v.combustivel, v.marca));
