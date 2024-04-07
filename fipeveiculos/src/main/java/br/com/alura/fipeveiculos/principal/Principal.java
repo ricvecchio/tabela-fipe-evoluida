@@ -5,17 +5,8 @@ import br.com.alura.fipeveiculos.repository.MarcaRepository;
 import br.com.alura.fipeveiculos.service.ConsultaChatGPT;
 import br.com.alura.fipeveiculos.service.ConsumoApi;
 import br.com.alura.fipeveiculos.service.ConverteDados;
-import ch.qos.logback.core.joran.spi.ElementSelector;
-import org.hibernate.tool.schema.internal.exec.ScriptTargetOutputToFile;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.stream.Collectors;
 
