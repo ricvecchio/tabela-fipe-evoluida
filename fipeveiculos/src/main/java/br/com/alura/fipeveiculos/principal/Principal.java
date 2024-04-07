@@ -54,7 +54,7 @@ public class Principal {
             var menu = """
                      \n**** TABELA FIPE ****
                      
-                     1 - Buscar valores de carros, motos ou caminhões no site (fipe.org.br) 
+                     1 - Buscar valores (carros/motos/caminhões) site (fipe.org.br) e atualizar banco de dados
                      2 - Buscar informações de um veículo pelo nome no ChatGPT 
                      3 - Buscar marcas no site (fipe.org.br) e salvar no banco de dados 
                      4 - Listar marcas e veículos do banco de dados (Marcas/Veículos) 
