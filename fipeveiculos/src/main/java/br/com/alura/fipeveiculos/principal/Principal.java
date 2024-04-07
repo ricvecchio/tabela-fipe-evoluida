@@ -477,7 +477,7 @@ public class Principal {
                     return;
                 case 0:
                     System.out.println("Saindo...");
-                    return;
+                    break;
                 default:
                     System.out.println("Opção inválida");
                     break;
