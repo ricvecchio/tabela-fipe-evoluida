@@ -54,18 +54,18 @@ public class Principal {
             var menu = """
                      \n**** TABELA FIPE ****
                      
-                     1 - Buscar valores de carros, motos ou caminhões no site (fipe.org.br)  
-                     2 - Buscar informações de um veículo pelo nome no ChatGPT ==============>>> OK
-                     3 - Buscar marcas no site (fipe.org.br) e salvar no banco de dados =====>>> OK
-                     4 - Listar marcas e veículos do banco de dados (Marcas/Veículos) =======>>> OK
-                     5 - Buscar detalhe da marca no ChatGPT e atualizar no banco de dados ===>>> OK
-                     6 - Buscar veículos no site pela marca e salvar no banco de dados ======>>> OK
-                     7 - Buscar marca pelo nome =============================================>>> OK
-                     8 - Buscar veículos pelo nome ou trecho ================================>>> OK
-                     9 - Buscar marca e filtrar pelo segmento (carros/motos/caminhoes) ======>>> OK
-                    10 - Buscar veículos pelo valor da tabela fipe ==========================>>> OK
-                    11 - Buscar veículos a partir de uma data ===============================>>> OK
-                    99 - Deletar banco de dados =============================================>>> OK
+                     1 - Buscar valores de carros, motos ou caminhões no site (fipe.org.br) 
+                     2 - Buscar informações de um veículo pelo nome no ChatGPT 
+                     3 - Buscar marcas no site (fipe.org.br) e salvar no banco de dados 
+                     4 - Listar marcas e veículos do banco de dados (Marcas/Veículos) 
+                     5 - Buscar detalhe da marca no ChatGPT e atualizar no banco de dados
+                     6 - Buscar veículos no site pela marca e salvar no banco de dados
+                     7 - Buscar marca pelo nome 
+                     8 - Buscar veículos pelo nome ou trecho 
+                     9 - Buscar marca e filtrar pelo segmento (carros/motos/caminhoes)
+                    10 - Buscar veículos pelo valor da tabela fipe
+                    11 - Buscar veículos a partir de uma data
+                    99 - Deletar banco de dados
                                     
                     0 - Sair                     """;
             System.out.println(menu);
