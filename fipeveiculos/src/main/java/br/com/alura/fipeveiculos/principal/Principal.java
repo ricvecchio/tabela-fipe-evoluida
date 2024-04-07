@@ -54,16 +54,16 @@ public class Principal {
                      \n**** TABELA FIPE ****
                      
                      1 - Buscar valores (carros/motos/caminhões) site (fipe.org.br) e atualizar banco de dados
-                     2 - Buscar informações de um veículo pelo nome no ChatGPT 
+                     2 - Buscar informações de um veículo pelo nome (ChatGPT) 
                      3 - Buscar marcas no site (fipe.org.br) e salvar no banco de dados 
                      4 - Listar marcas e veículos do banco de dados (Marcas/Veículos) 
-                     5 - Buscar detalhe da marca no ChatGPT e atualizar no banco de dados
-                     6 - Buscar veículos no site pela marca e salvar no banco de dados
-                     7 - Buscar marca pelo nome 
-                     8 - Buscar veículos pelo nome ou trecho 
-                     9 - Buscar marca e filtrar pelo segmento (carros/motos/caminhoes)
-                    10 - Buscar veículos pelo valor da tabela fipe
-                    11 - Buscar veículos a partir de uma data
+                     5 - Buscar detalhes da marca (ChatGPT) e atualizar no banco de dados
+                     6 - Buscar veículos no site (fipe.org.br) pela marca e salvar no banco de dados
+                     7 - Buscar marca do banco de dados pelo nome 
+                     8 - Buscar veículos do banco de dados pelo nome ou trecho 
+                     9 - Buscar marca do banco de dados e filtrar pelo segmento (carros/motos/caminhoes)
+                    10 - Buscar veículos do banco de dados pelo valor da tabela fipe
+                    11 - Buscar veículos do banco de dados a partir de uma data
                     99 - Deletar banco de dados
                                     
                     0 - Sair                     """;
@@ -91,19 +91,19 @@ public class Principal {
                     buscarVeiculosWebPorMarca();
                     break;
                 case 7:
-                    buscarMarcaPorNome();
+                    buscarMarcaTabelaPeloNome();
                     break;
                 case 8:
-                    buscarVeiculoPorTrechoNome();
+                    buscarVeiculoTabelaPeloTrechoNome();
                     break;
                 case 9:
-                    buscarMarcaPorSegmento();
+                    buscarMarcaTabelaPeloSegmento();
                     break;
                 case 10:
-                    buscarVeiculoPorValor();
+                    buscarVeiculoTabelaPeloValor();
                     break;
                 case 11:
-                    buscarVeiculosAposUmaData();
+                    buscarVeiculoTabelaAposUmaData();
                     break;
                 case 99:
                     limparBancoDeDados();
@@ -333,7 +333,7 @@ public class Principal {
         }
     }
 
-    private void buscarMarcaPorNome() {
+    private void buscarMarcaTabelaPeloNome() {
         System.out.println("Escolha uma marca pelo nome: ");
         var nomeMarca = leitura.nextLine();
         marcaBusca = repositorio.findTop1ByMarcaContainingIgnoreCase(nomeMarca);
@@ -345,7 +345,7 @@ public class Principal {
         }
     }
 
-    private void buscarVeiculoPorTrechoNome() {
+    private void buscarVeiculoTabelaPeloTrechoNome() {
         System.out.println("\nDigite um trecho do veículo para consulta ou (S) para Encerrar:");
         var trechoNomeVeiculo = leitura.nextLine();
         if (trechoNomeVeiculo.equalsIgnoreCase("S")) {
@@ -356,7 +356,7 @@ public class Principal {
         List<Veiculo> veiculosEncontrados = repositorio.veiculosPorTrecho(trechoNomeVeiculo);
         if (veiculosEncontrados.isEmpty() == true) {
             System.out.println("Não encontrado nenhum veículo com o trecho: " + trechoNomeVeiculo);
-            buscarVeiculoPorTrechoNome();
+            buscarVeiculoTabelaPeloTrechoNome();
         } else {
             veiculosEncontrados.forEach(v ->
                     System.out.printf("Código: %s - Veículo: %s - Segmento: %s - Ano: %s - Valor: %s\n",
@@ -364,7 +364,7 @@ public class Principal {
         }
     }
 
-    private void buscarMarcaPorSegmento() {
+    private void buscarMarcaTabelaPeloSegmento() {
         System.out.println("Qual a marca para busca?");
         var nomeMarca = leitura.nextLine();
         System.out.println("Qual o segmento para busca?");
@@ -374,7 +374,7 @@ public class Principal {
                 System.out.println("Marcas: " + m.getMarca() + " Segmento: " + m.getSegmento()));
     }
 
-    private void buscarVeiculoPorValor() {
+    private void buscarVeiculoTabelaPeloValor() {
         System.out.println("Qual o veículo para busca?");
         var nomeVeiculo = leitura.nextLine();
         System.out.println("Qual o valor máximo do veículo?");
@@ -385,7 +385,7 @@ public class Principal {
                 System.out.println(v.getModelo() + " Valores: " + v.getValor()));
     }
 
-    private void buscarVeiculosAposUmaData() {
+    private void buscarVeiculoTabelaAposUmaData() {
         System.out.println("Qual o veículo para busca?");
         var nomeVeiculo = leitura.nextLine();
         System.out.println("Digite o ano limite do veículo:");
