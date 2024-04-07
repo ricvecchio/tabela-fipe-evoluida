@@ -44,16 +44,16 @@ public class Principal {
                      \n**** TABELA FIPE ****
                      
                      1 - Buscar valores (carros/motos/caminhões) site (fipe.org.br) e atualizar banco de dados
-                     2 - Buscar informações de um veículo pelo nome (ChatGPT) 
-                     3 - Buscar marcas no site (fipe.org.br) e salvar no banco de dados 
-                     4 - Listar marcas e veículos do banco de dados (Marcas/Veículos) 
-                     5 - Buscar detalhes da marca (ChatGPT) e atualizar no banco de dados
-                     6 - Buscar veículos no site (fipe.org.br) pela marca e salvar no banco de dados
-                     7 - Buscar marca do banco de dados pelo nome 
+                     2 - Buscar marcas no site (fipe.org.br) e salvar no banco de dados 
+                     3 - Listar marcas e veículos do banco de dados (Marcas/Veículos) 
+                     4 - Buscar detalhes da marca (ChatGPT) e atualizar no banco de dados
+                     5 - Buscar marca do banco de dados pelo nome 
+                     6 - Buscar marca do banco de dados e filtrar pelo segmento (carros/motos/caminhoes)
+                     7 - Buscar veículos no site (fipe.org.br) pela marca e salvar no banco de dados
                      8 - Buscar veículos do banco de dados pelo nome ou trecho 
-                     9 - Buscar marca do banco de dados e filtrar pelo segmento (carros/motos/caminhoes)
-                    10 - Buscar veículos do banco de dados pelo valor da tabela fipe
-                    11 - Buscar veículos do banco de dados a partir de uma data
+                     9 - Buscar veículos do banco de dados pelo valor da tabela fipe
+                    10 - Buscar veículos do banco de dados a partir de uma data
+                    11 - Buscar informações de um veículo pelo nome (ChatGPT) 
                     12 - Deletar banco de dados (Marcas/Veiculos)
                                     
                     0 - Sair                     """;
@@ -66,34 +66,34 @@ public class Principal {
                     buscarValoresWebESalvarTabela();
                     break;
                 case 2:
-                    buscarVeiculoChatGPT();
-                    break;
-                case 3:
                     buscarMarcasWebESalvarNaTabela();
                     break;
-                case 4:
+                case 3:
                     consultaDadosMarcasSalvo();
                     break;
-                case 5:
+                case 4:
                     buscarDetalheMarcaChatGPT();
                     break;
+                case 5:
+                    buscarMarcaTabelaPeloNome();
+                    break;
                 case 6:
-                    buscarVeiculosWebPorMarca();
+                    buscarMarcaTabelaPeloSegmento();
                     break;
                 case 7:
-                    buscarMarcaTabelaPeloNome();
+                    buscarVeiculosWebPorMarca();
                     break;
                 case 8:
                     buscarVeiculoTabelaPeloTrechoNome();
                     break;
                 case 9:
-                    buscarMarcaTabelaPeloSegmento();
-                    break;
-                case 10:
                     buscarVeiculoTabelaPeloValor();
                     break;
-                case 11:
+                case 10:
                     buscarVeiculoTabelaAposUmaData();
+                    break;
+                case 11:
+                    buscarVeiculoChatGPT();
                     break;
                 case 12:
                     limparBancoDeDados();
@@ -220,14 +220,6 @@ public class Principal {
                         v.getAno(), v.getValor(), v.getCodigoModelo(), v.getModelo(), v.combustivel, v.marca));
     }
 
-    private void buscarVeiculoChatGPT() {
-        System.out.println("Digite o nome do veículo para buscar as informações na IA: ");
-        var veiculo = leitura.nextLine();
-        String textoIA = "Em um único paragrafo fale da Marca de veículo: " + veiculo;
-        var infoVeiculoIA = ConsultaChatGPT.obterDadosIA(textoIA).trim();
-        System.out.println(infoVeiculoIA);
-    }
-
     private void buscarMarcasWebESalvarNaTabela() {
         exibeMenuSegmento();
         listarMarcasWebESalvar();
@@ -247,6 +239,28 @@ public class Principal {
         } else {
             System.out.println("ID da Marca não localizado!");
         }
+    }
+
+    private void buscarMarcaTabelaPeloNome() {
+        System.out.println("Escolha uma marca pelo nome: ");
+        var nomeMarca = leitura.nextLine();
+        marcaBusca = repositorio.findTop1ByMarcaContainingIgnoreCase(nomeMarca);
+
+        if (marcaBusca.isPresent()) {
+            System.out.println("Dados da marca: " + marcaBusca.get());
+        } else {
+            System.out.println("Marca não encontrada!");
+        }
+    }
+
+    private void buscarMarcaTabelaPeloSegmento() {
+        System.out.println("Qual a marca para busca?");
+        var nomeMarca = leitura.nextLine();
+        System.out.println("Qual o segmento para busca?");
+        var segmentoMarca = leitura.nextLine();
+        List<DadosMarca> marcasEncontradas = repositorio.findByMarcaContainingIgnoreCaseAndSegmentoContainingIgnoreCase(nomeMarca, segmentoMarca);
+        marcasEncontradas.forEach(m ->
+                System.out.println("Marcas: " + m.getMarca() + " Segmento: " + m.getSegmento()));
     }
 
     public void updateDetalheIa() {
@@ -323,18 +337,6 @@ public class Principal {
         }
     }
 
-    private void buscarMarcaTabelaPeloNome() {
-        System.out.println("Escolha uma marca pelo nome: ");
-        var nomeMarca = leitura.nextLine();
-        marcaBusca = repositorio.findTop1ByMarcaContainingIgnoreCase(nomeMarca);
-
-        if (marcaBusca.isPresent()) {
-            System.out.println("Dados da marca: " + marcaBusca.get());
-        } else {
-            System.out.println("Marca não encontrada!");
-        }
-    }
-
     private void buscarVeiculoTabelaPeloTrechoNome() {
         System.out.println("\nDigite um trecho do veículo para consulta ou (S) para Encerrar:");
         var trechoNomeVeiculo = leitura.nextLine();
@@ -352,16 +354,6 @@ public class Principal {
                     System.out.printf("Código: %s - Veículo: %s - Segmento: %s - Ano: %s - Valor: %s\n",
                             v.getCodigoModelo(), v.getModelo(), v.getSegmento(), v.getAno(), v.getValor()));
         }
-    }
-
-    private void buscarMarcaTabelaPeloSegmento() {
-        System.out.println("Qual a marca para busca?");
-        var nomeMarca = leitura.nextLine();
-        System.out.println("Qual o segmento para busca?");
-        var segmentoMarca = leitura.nextLine();
-        List<DadosMarca> marcasEncontradas = repositorio.findByMarcaContainingIgnoreCaseAndSegmentoContainingIgnoreCase(nomeMarca, segmentoMarca);
-        marcasEncontradas.forEach(m ->
-                System.out.println("Marcas: " + m.getMarca() + " Segmento: " + m.getSegmento()));
     }
 
     private void buscarVeiculoTabelaPeloValor() {
@@ -385,6 +377,14 @@ public class Principal {
         System.out.println("Veículos " + nomeVeiculo + " com ano maior que " + anoLimite + ":");
         veiculosAno.forEach(v ->
                 System.out.println(v.getModelo() + " - Valores: " + v.getValor() + " - Ano: " + v.getAno()));
+    }
+
+    private void buscarVeiculoChatGPT() {
+        System.out.println("Digite o nome do veículo para buscar as informações na IA: ");
+        var veiculo = leitura.nextLine();
+        String textoIA = "Em um único paragrafo fale da Marca de veículo: " + veiculo;
+        var infoVeiculoIA = ConsultaChatGPT.obterDadosIA(textoIA).trim();
+        System.out.println(infoVeiculoIA);
     }
 
     private void limparBancoDeDados() {
