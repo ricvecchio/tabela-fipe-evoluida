@@ -34,7 +34,6 @@ public class Principal {
     String nomeSegmento;
     String codigoModelo;
 
-
     public Principal(MarcaRepository repositorio) {
         this.repositorio = repositorio;
     }
@@ -55,7 +54,7 @@ public class Principal {
                      9 - Buscar marca do banco de dados e filtrar pelo segmento (carros/motos/caminhoes)
                     10 - Buscar veículos do banco de dados pelo valor da tabela fipe
                     11 - Buscar veículos do banco de dados a partir de uma data
-                    99 - Deletar banco de dados
+                    12 - Deletar banco de dados (Marcas/Veiculos)
                                     
                     0 - Sair                     """;
             System.out.println(menu);
@@ -96,7 +95,7 @@ public class Principal {
                 case 11:
                     buscarVeiculoTabelaAposUmaData();
                     break;
-                case 99:
+                case 12:
                     limparBancoDeDados();
                     break;
                 case 0:

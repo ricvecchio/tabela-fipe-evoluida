@@ -30,7 +30,7 @@ public interface MarcaRepository extends JpaRepository<DadosMarca, Long> {
 
     @Modifying
     @Transactional
-    @Query(value="UPDATE Veiculos SET valor=:valorVeiculo, data_atualizacao=:dataAtualizacao WHERE codigo_modelo=:codigoModelo AND ano=:anoVeiculo", nativeQuery=true)
+    @Query(value = "UPDATE Veiculos SET valor=:valorVeiculo, data_atualizacao=:dataAtualizacao WHERE codigo_modelo=:codigoModelo AND ano=:anoVeiculo", nativeQuery = true)
     public void atualizaDadosVeiculo(String codigoModelo, Integer anoVeiculo, String valorVeiculo, String dataAtualizacao);
 
     Optional<DadosMarca> findByCodigo(String codigoMarca);
@@ -42,9 +42,7 @@ public interface MarcaRepository extends JpaRepository<DadosMarca, Long> {
     @Query("SELECT v FROM DadosMarca m JOIN m.veiculos v WHERE v.codigoModelo=:codigoModelo")
     List<Veiculo> veiculosPorCodigo(String codigoModelo);
 
-//    @Query("SELECT v FROM DadosMarca m JOIN m.veiculos v WHERE v.codigoModelo=:codigoModelo AND v.ano=:ano")
-//    @Query(value="SELECT * FROM Veiculos WHERE codigo_modelo=:codigoModelo AND ano=:ano", nativeQuery=true)
-    @Query(value="SELECT COUNT(*) FROM Veiculos WHERE codigo_modelo=:codigoModelo AND ano=:ano", nativeQuery=true)
+    @Query(value = "SELECT COUNT(*) FROM Veiculos WHERE codigo_modelo=:codigoModelo AND ano=:ano", nativeQuery = true)
     Long veiculosPorCodigoEAno(String codigoModelo, Integer ano);
 
     @Query("SELECT v FROM DadosMarca m JOIN m.veiculos v WHERE v.modelo ILIKE %:trechoNomeVeiculo%")

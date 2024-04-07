@@ -22,7 +22,6 @@ public class DadosMarca {
     @NotNull
     @Column(name = "Marca")
     @JsonAlias("nome") private String marca;
-
     @Column(length = 500)
     private String detalheIa;
     private String segmento;
@@ -87,7 +86,7 @@ public class DadosMarca {
                 ", Marca = " + marca +
                 ", Segmento = " + segmento +
                 ", Detalhe = " + detalheIa +
-                 ", Veículos = " + veiculos;
+                ", Veículos = " + veiculos;
     }
 }
 

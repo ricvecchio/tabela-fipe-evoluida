@@ -5,10 +5,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import org.jetbrains.annotations.NotNull;
 
-import java.time.LocalDate;
-
 @Entity
-@Table(name = "veiculos")
+@Table(name = "Veiculos")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Veiculo {
     @Id
@@ -42,6 +40,7 @@ public class Veiculo {
     public Long getId() {
         return id;
     }
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -49,6 +48,7 @@ public class Veiculo {
     public String getCodigoModelo() {
         return codigoModelo;
     }
+
     public void setCodigoModelo(String codigoModelo) {
         this.codigoModelo = codigoModelo;
     }
@@ -56,6 +56,7 @@ public class Veiculo {
     public String getModelo() {
         return modelo;
     }
+
     public void setModelo(String modelo) {
         this.modelo = modelo;
     }
@@ -63,6 +64,7 @@ public class Veiculo {
     public Integer getAno() {
         return ano;
     }
+
     public void setAno(Integer ano) {
         this.ano = ano;
     }
@@ -70,6 +72,7 @@ public class Veiculo {
     public String getValor() {
         return valor;
     }
+
     public void setValor(String valor) {
         this.valor = valor;
     }
@@ -77,6 +80,7 @@ public class Veiculo {
     public String getCombustivel() {
         return combustivel;
     }
+
     public void setCombustivel(String combustivel) {
         this.combustivel = combustivel;
     }
@@ -84,6 +88,7 @@ public class Veiculo {
     public String getSegmento() {
         return segmento;
     }
+
     public void setSegmento(String segmento) {
         this.segmento = segmento;
     }
@@ -91,6 +96,7 @@ public class Veiculo {
     public String getCodigoMarca() {
         return codigoMarca;
     }
+
     public void setCodigoMarca(String codigoMarca) {
         this.codigoMarca = codigoMarca;
     }
@@ -98,6 +104,7 @@ public class Veiculo {
     public String getMarca() {
         return marca;
     }
+
     public void setMarca(String marca) {
         this.marca = marca;
     }
@@ -105,6 +112,7 @@ public class Veiculo {
     public DadosMarca getDadosMarca() {
         return dadosMarca;
     }
+
     public void setDadosMarca(DadosMarca dadosMarca) {
         this.dadosMarca = dadosMarca;
     }
@@ -112,6 +120,7 @@ public class Veiculo {
     public String getDataAtualizacao() {
         return dataAtualizacao;
     }
+
     public void setDataAtualizacao(String dataAtualizacao) {
         this.dataAtualizacao = dataAtualizacao;
     }
@@ -126,6 +135,7 @@ public class Veiculo {
                 ", combustivel = " + combustivel +
                 ", segmento = " + segmento +
                 ", Código Marca = " + codigoMarca +
-                ", Marca = " + marca;
+                ", Marca = " + marca +
+                ", Data Atualizacao = " + dataAtualizacao;
     }
 }
