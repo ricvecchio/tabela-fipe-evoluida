@@ -282,15 +282,12 @@ public class Principal {
             json = consumo.obterDados(enderecoAnos);
 
             DadosVeiculo veiculo = conversor.obterDados(json, DadosVeiculo.class);
-            System.out.println("TESTANDO veiculo = " + veiculo);
-
             veiculos.add(veiculo);
         }
 
         List<Veiculo> listaVeiculos = new ArrayList<>();
 
         for (int y = 0; y < veiculos.size(); y++) {
-            System.out.println("TESTANDO ENTROU FOR Y: " + y);
 
             Veiculo dadosVeiculo = new Veiculo();
             dadosVeiculo.setCodigoModelo(codigoModelo);
@@ -309,15 +306,11 @@ public class Principal {
 
             listaVeiculos.add(dadosVeiculo);
 
-            System.out.println("TESTANDO codigoModelo = " + codigoModelo);
-            System.out.println("TESTANDO veiculos.get(y).ano() = " + veiculos.get(y).ano());
             Long veiculoEncontrado = repositorio.veiculosPorCodigoEAno(codigoModelo, veiculos.get(y).ano());
 
             if (veiculoEncontrado > 0) {
-                System.out.println("TESTANDO veiculoEncontrado (count) ATUALIZA = " + veiculoEncontrado);
                 repositorio.atualizaDadosVeiculo(codigoModelo, veiculos.get(y).ano(), veiculos.get(y).valor(), dadosVeiculo.getDataAtualizacao());
             } else {
-                System.out.println("TESTANDO veiculoEncontrado (count) INSERE = " + veiculoEncontrado);
                 marcaEncontrada.setVeiculos(listaVeiculos);
                 repositorio.save(marcaEncontrada);
             }
@@ -476,9 +469,8 @@ public class Principal {
             var menu = """
                      \n**** Digite a Tabela para Limpeza ****
                      
-                    1 - Marcas
+                    1 - Marcas/Veículos
                     2 - Veículos
-                    3 - Ambas
                                     
                     0 - Sair                     """;
             System.out.println(menu);
@@ -486,14 +478,11 @@ public class Principal {
             leitura.nextLine();
             switch (opcaoDelete) {
                 case 1:
+                    repositorio.deleteVeiculoFull();
                     repositorio.deleteDadosMarcaFull();
                     return;
                 case 2:
                     repositorio.deleteVeiculoFull();
-                    return;
-                case 3:
-                    repositorio.deleteVeiculoFull();
-                    repositorio.deleteDadosMarcaFull();
                     return;
                 case 0:
                     System.out.println("Saindo...");
@@ -505,7 +494,6 @@ public class Principal {
         }
     }
 }
-
 
 
 
@@ -536,21 +524,11 @@ public class Principal {
           *** Essa função peek (espiada), mostra o que a função anterior executou, a forma por traz do lambda.
           .peek(e -> System.out.println("Primeiro filtro(N/A) " +  e))
 
-      *** Imprimindo todas as temporadas usando lambda (ambos estão fazendo a mesma coisa abaixo):
-        temporadas.forEach(t -> System.out.println(t));
-        temporadas.forEach(System.out::println);
-
-
       *** EXEMPLOS DE FUNÇÕES .STREAM *** (FILTRA POR VALOR CRIANDO NOVA LISTA (MAP) E TRAZENDO SOMENTE O PRIMEIRO)
 
                 var codigoVeiculo =  modeloLista.modelos().stream()
                         .filter(m -> m.codigo().equals("9680"))
                         .map(m -> m.codigo())
-                        .findFirst();
-
-                var nomeVeiculo =  modeloLista.modelos().stream()
-                        .filter(m -> m.codigo().equals("9680"))
-                        .map(m -> m.nome())
                         .findFirst();
 
  */
