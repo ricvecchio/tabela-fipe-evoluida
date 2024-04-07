@@ -42,7 +42,6 @@ public class Principal {
     String detalheMarca;
     String nomeSegmento;
     String codigoModelo;
-    String veiculoEncontrado;
 
 
     public Principal(MarcaRepository repositorio) {
@@ -74,7 +73,7 @@ public class Principal {
 
             switch (opcao) {
                 case 1:
-                    buscarVeiculoWeb();
+                    buscarValoresWebESalvarTabela();
                     break;
                 case 2:
                     buscarVeiculoChatGPT();
@@ -118,104 +117,23 @@ public class Principal {
         }
     }
 
-    private void buscarVeiculosWebPorMarca() {
-        consultaDadosMarcasSalvo();
-        List<DadosMarca> marcas = repositorio.findAll();
-        marcas.stream()
-                .sorted(Comparator.comparing(DadosMarca::getMarca))
-                .forEach(System.out::println);
-
-        enderecoBase = endereco;
-        while (json == null) {
-            System.out.println("\nEscolha uma marca pelo código:");
-            codigoMarca = leitura.nextLine();
-
-            String finalCodigoMarca = codigoMarca;
-            var veiculoFiltrado = marcas.stream()
-                    .filter(m -> m.getCodigo().equalsIgnoreCase(finalCodigoMarca))
-                    .sorted(Comparator.comparing(DadosMarca::getMarca))
-                    .collect(Collectors.toList());
-
-            nomeSegmento = veiculoFiltrado.get(0).getSegmento().toLowerCase();
-            endereco = URL_BASE + nomeSegmento + "/marcas/" + codigoMarca + "/modelos/";
-
-            json = consumo.obterDados(endereco);
-            if (json == null) {
-                System.out.println("\nCódigo não encontrado.");
-                endereco = enderecoBase;
-            } else {
-                break;
-            }
-        }
-
-        modeloLista = conversor.obterDados(json, Modelos.class);
-        modeloLista.modelos().stream()
-                .sorted(Comparator.comparing(DadosSite::nome))
-                .forEach(System.out::println);
+    private void buscarValoresWebESalvarTabela() {
+        exibeMenuSegmento();
+        listarMarcasWebESalvar();
+        buscarListaDeModelos();
 
         Optional<DadosMarca> buscaMarca = repositorio.findByCodigo(codigoMarca);
         if (buscaMarca.isPresent()) {
             nomeMarca = buscaMarca.get().getMarca();
             marcaEncontrada = buscaMarca.get();
-            insereVeiculosBancoDeDados();
+
+            montaUrlEnderecoAnos();
+            buscarValoresAnosFipeEIncluiOuAtualizaTabela();
         }
     }
 
-    public void insereVeiculosBancoDeDados() {
+    private void buscarListaDeModelos() {
 
-        var quantidadeVeiculos = modeloLista.modelos().stream().count();
-        List<Veiculo> listaVeiculos = new ArrayList<>();
-
-        var codigoVeiculo = modeloLista.modelos().stream().map(DadosSite::codigo).collect(Collectors.toList());
-        var nomeVeiculo = modeloLista.modelos().stream().map(DadosSite::nome).collect(Collectors.toList());
-
-        for (int i = 0; i < quantidadeVeiculos; i++) {
-            List<Veiculo> buscaVeiculo = repositorio.veiculosPorCodigo(codigoVeiculo.get(i));
-
-            if (buscaVeiculo.isEmpty() == true) {
-
-                Veiculo dadosVeiculo = new Veiculo();
-                dadosVeiculo.setCodigoModelo(codigoVeiculo.get(i));
-                dadosVeiculo.setModelo(nomeVeiculo.get(i));
-                dadosVeiculo.setCodigoMarca(codigoMarca);
-                dadosVeiculo.setMarca(nomeMarca);
-                dadosVeiculo.setSegmento(nomeSegmento);
-
-                listaVeiculos.add(dadosVeiculo);
-                marcaEncontrada.setVeiculos(listaVeiculos);
-                repositorio.save(marcaEncontrada);
-            }
-        }
-    }
-
-    public void updateDetalheIa() {
-        repositorio.updateDetalheIa(idMarca, detalheMarca);
-    }
-
-    private void listarMarcasWebESalvar() {
-        System.out.println("\nListando Marcas de veículos do site (fipe.org) e salvando no banco de dados: \n");
-        var json = consumo.obterDados(endereco);
-
-        List<DadosMarca> marcas = conversor.obterLista(json, DadosMarca.class);
-
-        for (DadosMarca listaMarcas : marcas) {
-            Optional<DadosMarca> buscaMarca = repositorio.findByCodigo(listaMarcas.getCodigo());
-            System.out.println("Código: " + listaMarcas.getCodigo() + " - Marca: " + listaMarcas.getMarca());
-            if (buscaMarca.isPresent()) {
-                continue;
-            } else {
-                listaMarcas.setSegmento(nomeSegmento);
-                repositorio.save(listaMarcas);
-            }
-        }
-    }
-
-    private void buscarVeiculoWeb() {
-        exibeMenuSegmento();
-        listarMarcasWebESalvar();
-/*
-        Recebe o código da marca digitado e efetua uma busca dos modelos de véiculos ordenando pelo código.
-*/
         enderecoBase = endereco;
         json = null;
         while (json == null) {
@@ -239,14 +157,6 @@ public class Principal {
         modeloLista.modelos().stream()
                 .sorted(Comparator.comparing(DadosSite::nome))
                 .forEach(System.out::println);
-
-        Optional<DadosMarca> buscaMarca = repositorio.findByCodigo(codigoMarca);
-        if (buscaMarca.isPresent()) {
-            nomeMarca = buscaMarca.get().getMarca();
-            marcaEncontrada = buscaMarca.get();
-            montaUrlEnderecoAnos();
-            buscarValoresAnosFipeEIncluiOuAtualizaTabela();
-        }
     }
 
     private void montaUrlEnderecoAnos() {
@@ -277,7 +187,6 @@ public class Principal {
         List<DadosVeiculo> veiculos = new ArrayList<>();
 
         for (int i = 0; i < anos.size(); i++) {
-
             var enderecoAnos = endereco + "/" + anos.get(i).codigo();
             json = consumo.obterDados(enderecoAnos);
 
@@ -350,15 +259,77 @@ public class Principal {
         }
     }
 
-    private void consultaDadosMarcasSalvo() {
-        marcas = repositorio.findAll();
+    public void updateDetalheIa() {
+        repositorio.updateDetalheIa(idMarca, detalheMarca);
+    }
+
+    private void buscarVeiculosWebPorMarca() {
+        consultaDadosMarcasSalvo();
+        List<DadosMarca> marcas = repositorio.findAll();
         marcas.stream()
                 .sorted(Comparator.comparing(DadosMarca::getMarca))
                 .forEach(System.out::println);
 
-        if (marcas.isEmpty() == true) {
-            System.out.println("Não existe registro no banco de dados!");
-            exibeMenu();
+        enderecoBase = endereco;
+        while (json == null) {
+            System.out.println("\nEscolha uma marca pelo código:");
+            codigoMarca = leitura.nextLine();
+
+            String finalCodigoMarca = codigoMarca;
+            var veiculoFiltrado = marcas.stream()
+                    .filter(m -> m.getCodigo().equalsIgnoreCase(finalCodigoMarca))
+                    .sorted(Comparator.comparing(DadosMarca::getMarca))
+                    .collect(Collectors.toList());
+
+            nomeSegmento = veiculoFiltrado.get(0).getSegmento().toLowerCase();
+            endereco = URL_BASE + nomeSegmento + "/marcas/" + codigoMarca + "/modelos/";
+
+            json = consumo.obterDados(endereco);
+            if (json == null) {
+                System.out.println("\nCódigo não encontrado.");
+                endereco = enderecoBase;
+            } else {
+                break;
+            }
+        }
+
+        modeloLista = conversor.obterDados(json, Modelos.class);
+        modeloLista.modelos().stream()
+                .sorted(Comparator.comparing(DadosSite::nome))
+                .forEach(System.out::println);
+
+        Optional<DadosMarca> buscaMarca = repositorio.findByCodigo(codigoMarca);
+        if (buscaMarca.isPresent()) {
+            nomeMarca = buscaMarca.get().getMarca();
+            marcaEncontrada = buscaMarca.get();
+            insereVeiculosBancoDeDados();
+        }
+    }
+
+    public void insereVeiculosBancoDeDados() {
+
+        var quantidadeVeiculos = modeloLista.modelos().stream().count();
+        List<Veiculo> listaVeiculos = new ArrayList<>();
+
+        var codigoVeiculo = modeloLista.modelos().stream().map(DadosSite::codigo).collect(Collectors.toList());
+        var nomeVeiculo = modeloLista.modelos().stream().map(DadosSite::nome).collect(Collectors.toList());
+
+        for (int i = 0; i < quantidadeVeiculos; i++) {
+            List<Veiculo> buscaVeiculo = repositorio.veiculosPorCodigo(codigoVeiculo.get(i));
+
+            if (buscaVeiculo.isEmpty() == true) {
+
+                Veiculo dadosVeiculo = new Veiculo();
+                dadosVeiculo.setCodigoModelo(codigoVeiculo.get(i));
+                dadosVeiculo.setModelo(nomeVeiculo.get(i));
+                dadosVeiculo.setCodigoMarca(codigoMarca);
+                dadosVeiculo.setMarca(nomeMarca);
+                dadosVeiculo.setSegmento(nomeSegmento);
+
+                listaVeiculos.add(dadosVeiculo);
+                marcaEncontrada.setVeiculos(listaVeiculos);
+                repositorio.save(marcaEncontrada);
+            }
         }
     }
 
@@ -426,6 +397,67 @@ public class Principal {
                 System.out.println(v.getModelo() + " - Valores: " + v.getValor() + " - Ano: " + v.getAno()));
     }
 
+    private void limparBancoDeDados() {
+        var opcaoDelete = -1;
+        while (opcaoDelete != 0) {
+            var menu = """
+                     \n**** Digite a Tabela para Limpeza ****
+                     
+                    1 - Marcas/Veículos
+                    2 - Veículos
+                                    
+                    0 - Sair                     """;
+            System.out.println(menu);
+            opcaoDelete = leitura.nextInt();
+            leitura.nextLine();
+            switch (opcaoDelete) {
+                case 1:
+                    repositorio.deleteVeiculoFull();
+                    repositorio.deleteDadosMarcaFull();
+                    return;
+                case 2:
+                    repositorio.deleteVeiculoFull();
+                    return;
+                case 0:
+                    System.out.println("Saindo...");
+                    return;
+                default:
+                    System.out.println("Opção inválida");
+                    break;
+            }
+        }
+    }
+
+    private void listarMarcasWebESalvar() {
+        System.out.println("\nListando Marcas de veículos do site (fipe.org) e salvando no banco de dados: \n");
+        var json = consumo.obterDados(endereco);
+
+        List<DadosMarca> marcas = conversor.obterLista(json, DadosMarca.class);
+
+        for (DadosMarca listaMarcas : marcas) {
+            Optional<DadosMarca> buscaMarca = repositorio.findByCodigo(listaMarcas.getCodigo());
+            System.out.println("Código: " + listaMarcas.getCodigo() + " - Marca: " + listaMarcas.getMarca());
+            if (buscaMarca.isPresent()) {
+                continue;
+            } else {
+                listaMarcas.setSegmento(nomeSegmento);
+                repositorio.save(listaMarcas);
+            }
+        }
+    }
+
+    private void consultaDadosMarcasSalvo() {
+        marcas = repositorio.findAll();
+        marcas.stream()
+                .sorted(Comparator.comparing(DadosMarca::getMarca))
+                .forEach(System.out::println);
+
+        if (marcas.isEmpty() == true) {
+            System.out.println("Não existe registro no banco de dados!");
+            exibeMenu();
+        }
+    }
+
     private void exibeMenuSegmento() {
         var segmento = -1;
         while (segmento != 0) {
@@ -452,37 +484,6 @@ public class Principal {
                 case 3:
                     endereco = URL_BASE + "caminhoes/marcas/";
                     nomeSegmento = "Caminhões";
-                    return;
-                case 0:
-                    System.out.println("Saindo...");
-                    return;
-                default:
-                    System.out.println("Opção inválida");
-                    break;
-            }
-        }
-    }
-
-    private void limparBancoDeDados() {
-        var opcaoDelete = -1;
-        while (opcaoDelete != 0) {
-            var menu = """
-                     \n**** Digite a Tabela para Limpeza ****
-                     
-                    1 - Marcas/Veículos
-                    2 - Veículos
-                                    
-                    0 - Sair                     """;
-            System.out.println(menu);
-            opcaoDelete = leitura.nextInt();
-            leitura.nextLine();
-            switch (opcaoDelete) {
-                case 1:
-                    repositorio.deleteVeiculoFull();
-                    repositorio.deleteDadosMarcaFull();
-                    return;
-                case 2:
-                    repositorio.deleteVeiculoFull();
                     return;
                 case 0:
                     System.out.println("Saindo...");
