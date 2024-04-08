@@ -301,15 +301,13 @@ public class Principal {
                     .sorted(Comparator.comparing(DadosMarca::getMarca))
                     .collect(Collectors.toList());
 
-            nomeSegmento = veiculoFiltrado.get(0).getSegmento().toLowerCase();
-            endereco = URL_BASE + nomeSegmento + "/marcas/" + codigoMarca + "/modelos/";
-
-            json = consumo.obterDados(endereco);
-            if (json == null) {
-                System.out.println("\nCódigo não encontrado.");
+            if (veiculoFiltrado.isEmpty() == true) {
+                System.out.println("\nCódigo da Marca " + codigoMarca + " não encontrado.");
                 endereco = enderecoBase;
             } else {
-                break;
+                nomeSegmento = veiculoFiltrado.get(0).getSegmento().toLowerCase();
+                endereco = URL_BASE + nomeSegmento + "/marcas/" + codigoMarca + "/modelos/";
+                json = consumo.obterDados(endereco);
             }
         }
 
