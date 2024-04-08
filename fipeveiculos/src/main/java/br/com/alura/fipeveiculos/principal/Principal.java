@@ -494,11 +494,8 @@ public class Principal {
 
     private void consultaMarcasTabela() {
         marcas = repositorio.findAll();
-
-        // ARRUMAR SAIDA ==> ID MARCA, CODIGO E MARCA
-        marcas.stream()
-                .sorted(Comparator.comparing(DadosMarca::getMarca))
-                .forEach(System.out::println);
+        marcas.forEach(m ->
+                System.out.println("ID: " + m.getId() + " - Código: " + m.getCodigo() + " - Marca: " + m.getMarca()));
 
         if (marcas.isEmpty() == true) {
             System.out.println("Não existe registro no banco de dados!");
