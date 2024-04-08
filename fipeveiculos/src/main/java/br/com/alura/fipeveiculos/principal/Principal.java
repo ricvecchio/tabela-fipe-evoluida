@@ -24,6 +24,7 @@ public class Principal {
     private DadosMarca marcaEncontrada;
 
     int opcao = -1;
+    int segmento = -1;
     String json = null;
     String endereco;
     String enderecoBase;
@@ -69,7 +70,7 @@ public class Principal {
                     buscarMarcasWebESalvarNaTabela();
                     break;
                 case 3:
-                    consultaDadosMarcasSalvo();
+                    consultaDadosMarcasTabela();
                     break;
                 case 4:
                     buscarDetalheMarcaChatGPT();
@@ -108,17 +109,21 @@ public class Principal {
     }
 
     private void buscarValoresWebESalvarTabela() {
+
         exibeMenuSegmento();
-        listarMarcasWebESalvar();
-        buscarListaDeModelos();
 
-        Optional<DadosMarca> buscaMarca = repositorio.findByCodigo(codigoMarca);
-        if (buscaMarca.isPresent()) {
-            nomeMarca = buscaMarca.get().getMarca();
-            marcaEncontrada = buscaMarca.get();
+        if (segmento != 0) {
+            listarMarcasWebESalvar();
+            buscarListaDeModelos();
 
-            montaUrlEnderecoAnos();
-            buscarValoresAnosFipeEIncluiOuAtualizaTabela();
+            Optional<DadosMarca> buscaMarca = repositorio.findByCodigo(codigoMarca);
+            if (buscaMarca.isPresent()) {
+                nomeMarca = buscaMarca.get().getMarca();
+                marcaEncontrada = buscaMarca.get();
+
+                montaUrlEnderecoAnos();
+                buscarValoresAnosFipeEIncluiOuAtualizaTabela();
+            }
         }
     }
 
@@ -221,12 +226,16 @@ public class Principal {
     }
 
     private void buscarMarcasWebESalvarNaTabela() {
+
         exibeMenuSegmento();
-        listarMarcasWebESalvar();
+
+        if (segmento != 0) {
+            listarMarcasWebESalvar();
+        }
     }
 
     private void buscarDetalheMarcaChatGPT() {
-        consultaDadosMarcasSalvo();
+        consultaMarcasTabela();
         System.out.println("\nDigite o ID da marca do veículo para buscar detalhes: ");
         idMarca = Long.valueOf(leitura.nextLine());
 
@@ -236,20 +245,26 @@ public class Principal {
             String textoIA = "Ano e país da marca " + buscaMarca.get().getMarca();
             detalheMarca = ConsultaChatGPT.obterDadosIA(textoIA).trim();
             updateDetalheIa();
+            System.out.println(detalheMarca);
         } else {
             System.out.println("ID da Marca não localizado!");
         }
     }
 
     private void buscarMarcaTabelaPeloNome() {
-        System.out.println("Escolha uma marca pelo nome: ");
+        System.out.println("Escolha uma marca pelo nome ou (S) para Encerrar:");
         var nomeMarca = leitura.nextLine();
-        marcaBusca = repositorio.findTop1ByMarcaContainingIgnoreCase(nomeMarca);
 
-        if (marcaBusca.isPresent()) {
-            System.out.println("Dados da marca: " + marcaBusca.get());
+        if (nomeMarca.equalsIgnoreCase("S")) {
+            System.out.println("\n*** Aplicação Encerrada ***");
         } else {
-            System.out.println("Marca não encontrada!");
+            marcaBusca = repositorio.findTop1ByMarcaContainingIgnoreCase(nomeMarca);
+
+            if (marcaBusca.isPresent()) {
+                System.out.println("Dados da marca: " + marcaBusca.get());
+            } else {
+                System.out.println("Marca não encontrada!");
+            }
         }
     }
 
@@ -259,8 +274,12 @@ public class Principal {
         System.out.println("Qual o segmento para busca?");
         var segmentoMarca = leitura.nextLine();
         List<DadosMarca> marcasEncontradas = repositorio.findByMarcaContainingIgnoreCaseAndSegmentoContainingIgnoreCase(nomeMarca, segmentoMarca);
-        marcasEncontradas.forEach(m ->
-                System.out.println("Marcas: " + m.getMarca() + " Segmento: " + m.getSegmento()));
+
+        if (marcasEncontradas.isEmpty() == true) {
+            System.out.println("Não encontrado nenhum registro com a Marca: " + nomeMarca + " e segmento: " + segmentoMarca);
+        } else {
+            System.out.println(marcasEncontradas);
+        }
     }
 
     public void updateDetalheIa() {
@@ -268,13 +287,10 @@ public class Principal {
     }
 
     private void buscarVeiculosWebPorMarca() {
-        consultaDadosMarcasSalvo();
-        List<DadosMarca> marcas = repositorio.findAll();
-        marcas.stream()
-                .sorted(Comparator.comparing(DadosMarca::getMarca))
-                .forEach(System.out::println);
+        consultaMarcasTabela();
 
         enderecoBase = endereco;
+        json = null;
         while (json == null) {
             System.out.println("\nEscolha uma marca pelo código:");
             codigoMarca = leitura.nextLine();
@@ -340,51 +356,80 @@ public class Principal {
     private void buscarVeiculoTabelaPeloTrechoNome() {
         System.out.println("\nDigite um trecho do veículo para consulta ou (S) para Encerrar:");
         var trechoNomeVeiculo = leitura.nextLine();
+
         if (trechoNomeVeiculo.equalsIgnoreCase("S")) {
             System.out.println("\n*** Aplicação Encerrada ***");
-            System.exit(0);
-        }
-
-        List<Veiculo> veiculosEncontrados = repositorio.veiculosPorTrecho(trechoNomeVeiculo);
-        if (veiculosEncontrados.isEmpty() == true) {
-            System.out.println("Não encontrado nenhum veículo com o trecho: " + trechoNomeVeiculo);
-            buscarVeiculoTabelaPeloTrechoNome();
         } else {
-            veiculosEncontrados.forEach(v ->
-                    System.out.printf("Código: %s - Veículo: %s - Segmento: %s - Ano: %s - Valor: %s\n",
-                            v.getCodigoModelo(), v.getModelo(), v.getSegmento(), v.getAno(), v.getValor()));
+            List<Veiculo> veiculosEncontrados = repositorio.veiculosPorTrecho(trechoNomeVeiculo);
+            if (veiculosEncontrados.isEmpty() == true) {
+                System.out.println("Não encontrado nenhum veículo com o trecho: " + trechoNomeVeiculo);
+            } else {
+                veiculosEncontrados.forEach(v ->
+                        System.out.printf("Código: %s - Veículo: %s - Segmento: %s - Ano: %s - Valor: %s\n",
+                                v.getCodigoModelo(), v.getModelo(), v.getSegmento(), v.getAno(), v.getValor()));
+            }
         }
     }
 
     private void buscarVeiculoTabelaPeloValor() {
-        System.out.println("Qual o veículo para busca?");
+        System.out.println("Qual o veículo para busca ou (S) para Encerrar:");
         var nomeVeiculo = leitura.nextLine();
-        System.out.println("Qual o valor máximo do veículo?");
-        var valorVeiculo = leitura.nextLine();
-        List<Veiculo> veiculosEncontrados = repositorio.veiculosPorValores(nomeVeiculo, valorVeiculo);
-        System.out.println("Veículos " + nomeVeiculo + " com valores menores que " + valorVeiculo);
-        veiculosEncontrados.forEach(v ->
-                System.out.println(v.getModelo() + " Valores: " + v.getValor()));
+
+//        System.out.println("Qual o valor máximo do veículo?");
+//        var valorVeiculo = leitura.nextLine();
+//        List<Veiculo> veiculosEncontrados = repositorio.veiculosPorValores(nomeVeiculo, valorVeiculo);
+//        System.out.println("Veículos " + nomeVeiculo + " com valores menores que " + valorVeiculo);
+//        veiculosEncontrados.forEach(v ->
+//                System.out.println(v.getModelo() + " Valores: " + v.getValor()));
+
+        if (nomeVeiculo.equalsIgnoreCase("S")) {
+            System.out.println("\n*** Aplicação Encerrada ***");
+        } else {
+            System.out.println("Qual o valor máximo do veículo?");
+            var valorVeiculo = leitura.nextLine();
+            List<Veiculo> veiculosEncontrados = repositorio.veiculosPorValores(nomeVeiculo, valorVeiculo);
+            if (veiculosEncontrados.isEmpty() == true) {
+                System.out.println("Não encontrado nenhum veículo com o valor abaixo de " + valorVeiculo);
+            } else {
+                System.out.println("Veículos " + nomeVeiculo + " com valores menores que " + valorVeiculo);
+                veiculosEncontrados.forEach(v ->
+                        System.out.println(v.getModelo() + " Valores: " + v.getValor()));
+            }
+        }
     }
 
     private void buscarVeiculoTabelaAposUmaData() {
-        System.out.println("Qual o veículo para busca?");
+        System.out.println("Qual o veículo para busca ou (S) para Encerrar:");
         var nomeVeiculo = leitura.nextLine();
-        System.out.println("Digite o ano limite do veículo:");
-        var anoLimite = leitura.nextInt();
-        leitura.nextLine();
-        List<Veiculo> veiculosAno = repositorio.veiculosPorAno(nomeVeiculo, anoLimite);
-        System.out.println("Veículos " + nomeVeiculo + " com ano maior que " + anoLimite + ":");
-        veiculosAno.forEach(v ->
-                System.out.println(v.getModelo() + " - Valores: " + v.getValor() + " - Ano: " + v.getAno()));
+
+        if (nomeVeiculo.equalsIgnoreCase("S")) {
+            System.out.println("\n*** Aplicação Encerrada ***");
+        } else {
+            System.out.println("Digite o ano limite do veículo:");
+            var anoLimite = leitura.nextInt();
+            leitura.nextLine();
+            List<Veiculo> veiculosAno = repositorio.veiculosPorAno(nomeVeiculo, anoLimite);
+            if (veiculosAno.isEmpty() == true) {
+                System.out.println("Não encontrado nenhum veículo com o ano limite de " + veiculosAno);
+            } else {
+                System.out.println("Veículos " + nomeVeiculo + " com ano maior que " + anoLimite + ":");
+                veiculosAno.forEach(v ->
+                        System.out.println(v.getModelo() + " - Valores: " + v.getValor() + " - Ano: " + v.getAno()));
+            }
+        }
     }
 
     private void buscarVeiculoChatGPT() {
-        System.out.println("Digite o nome do veículo para buscar as informações na IA: ");
+        System.out.println("Digite o nome do veículo para buscar as informações na IA ou (S) para Encerrar:");
         var veiculo = leitura.nextLine();
-        String textoIA = "Em um único paragrafo fale da Marca de veículo: " + veiculo;
-        var infoVeiculoIA = ConsultaChatGPT.obterDadosIA(textoIA).trim();
-        System.out.println(infoVeiculoIA);
+
+        if (veiculo.equalsIgnoreCase("S")) {
+            System.out.println("\n*** Aplicação Encerrada ***");
+        } else {
+            String textoIA = "Em um único paragrafo fale da Marca de veículo: " + veiculo;
+            var infoVeiculoIA = ConsultaChatGPT.obterDadosIA(textoIA).trim();
+            System.out.println(infoVeiculoIA);
+        }
     }
 
     private void limparBancoDeDados() {
@@ -436,8 +481,21 @@ public class Principal {
         }
     }
 
-    private void consultaDadosMarcasSalvo() {
+    private void consultaDadosMarcasTabela() {
         marcas = repositorio.findAll();
+        marcas.stream()
+                .sorted(Comparator.comparing(DadosMarca::getMarca))
+                .forEach(System.out::println);
+
+        if (marcas.isEmpty() == true) {
+            System.out.println("Não existe registro no banco de dados!");
+        }
+    }
+
+    private void consultaMarcasTabela() {
+        marcas = repositorio.findAll();
+
+        // ARRUMAR SAIDA ==> ID MARCA, CODIGO E MARCA
         marcas.stream()
                 .sorted(Comparator.comparing(DadosMarca::getMarca))
                 .forEach(System.out::println);
@@ -449,7 +507,7 @@ public class Principal {
     }
 
     private void exibeMenuSegmento() {
-        var segmento = -1;
+        segmento = -1;
         while (segmento != 0) {
             var menu = """
                      \n**** Digite a opção do segmento da Marca ****
