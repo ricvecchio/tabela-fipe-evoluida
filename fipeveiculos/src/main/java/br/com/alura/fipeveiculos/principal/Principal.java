@@ -373,13 +373,6 @@ public class Principal {
         System.out.println("Qual o veículo para busca ou (S) para Encerrar:");
         var nomeVeiculo = leitura.nextLine();
 
-//        System.out.println("Qual o valor máximo do veículo?");
-//        var valorVeiculo = leitura.nextLine();
-//        List<Veiculo> veiculosEncontrados = repositorio.veiculosPorValores(nomeVeiculo, valorVeiculo);
-//        System.out.println("Veículos " + nomeVeiculo + " com valores menores que " + valorVeiculo);
-//        veiculosEncontrados.forEach(v ->
-//                System.out.println(v.getModelo() + " Valores: " + v.getValor()));
-
         if (nomeVeiculo.equalsIgnoreCase("S")) {
             System.out.println("\n*** Aplicação Encerrada ***");
         } else {
