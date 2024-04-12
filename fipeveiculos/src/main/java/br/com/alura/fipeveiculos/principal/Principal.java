@@ -6,7 +6,6 @@ import br.com.alura.fipeveiculos.service.ConsultaChatGPT;
 import br.com.alura.fipeveiculos.service.ConsumoApi;
 import br.com.alura.fipeveiculos.service.ConverteDados;
 
-
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -39,8 +38,6 @@ public class Principal {
     public Principal(MarcaRepository repositorio) {
         this.repositorio = repositorio;
     }
-
-
 
 
     public void exibeMenu() {
@@ -240,7 +237,7 @@ public class Principal {
 
     private static Double formataValor(String valorString) {
 
-        valorString = valorString.replaceAll("[R$]", "").replace(".","").replace(",",".").trim();
+        valorString = valorString.replaceAll("[R$]", "").replace(".", "").replace(",", ".").trim();
         double valorDouble = Double.parseDouble(valorString);
 
         // Formatação de moeda para enviar para Tela. Ex.: String = R$ 108.739,00
