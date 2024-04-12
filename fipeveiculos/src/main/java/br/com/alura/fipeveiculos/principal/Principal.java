@@ -63,6 +63,7 @@ public class Principal {
                     10 - Buscar veículos do banco de dados a partir de uma data
                     11 - Buscar informações de um veículo pelo nome (ChatGPT) 
                     12 - Deletar banco de dados (Marcas/Veiculos)
+                    13 - Metodo para formatar Moeda R$ (TESTE)
                                     
                     0 - Sair                     """;
             System.out.println(menu);
@@ -105,6 +106,9 @@ public class Principal {
                     break;
                 case 12:
                     limparBancoDeDados();
+                    break;
+                case 13:
+                    formataMoeda();
                     break;
                 case 0:
                     System.out.println("Saindo...");
@@ -233,42 +237,6 @@ public class Principal {
     }
 
     private void buscarMarcasWebESalvarNaTabela() {
-
-        String valorStr = "R$ 108.739,00";
-        valorStr = valorStr.replaceAll("[R$]", "").trim(); // string = 108.739,00
-        System.out.println("TESTANDO valorStr = " + valorStr);
-
-        String valorStr3 = "10873900";
-        int valorInt = Integer.valueOf(valorStr3).intValue();
-        System.out.println("TESTANDO valorInt = " + valorInt); // int = 10873900
-
-        String valorStr4 = "10873900";
-        double valorDouble = Double.valueOf(valorStr4).doubleValue();
-        System.out.println("TESTANDO valorDouble = " + valorDouble); // double = 1.08739E7
-
-        valorStr3 = "10873900";
-        Long valorLong = Long.parseLong(valorStr3);
-        System.out.println(java.text.NumberFormat.getCurrencyInstance().format(valorLong)); // Long = R$ 10.873.900,00
-
-        // Long    = R$ 10.873.900,00
-        // Correto = R$    108.739,00
-
-        double valorReal2 = 291933.1233;
-        int valorInteiro = 10873900;
-
-        java.text.NumberFormat dinheiro = java.text.NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
-        java.text.NumberFormat inteiro  = java.text.NumberFormat.getInstance(new Locale("pt", "BR"));
-        java.text.NumberFormat numberFormat  = java.text.NumberFormat.getNumberInstance(new Locale("pt", "BR"));
-
-        System.out.println("Valor Atual: " + valorReal2);
-        System.out.println("Valor Formatado em Moeda: " + dinheiro.format(valorReal2));
-        System.out.println("Valor Atual: " + valorInteiro);
-        System.out.println("Valor Formatado em Inteiro: " + inteiro.format(valorInteiro));
-        System.out.println("Valor Atual: " + valorReal2);
-        System.out.println("Valor Formatado padrão: " + numberFormat.format(valorReal2));
-
-
-        //DEIXAR SOMENTE ABAIXO:
 
         exibeMenuSegmento();
 
@@ -573,6 +541,43 @@ public class Principal {
                     break;
             }
         }
+    }
+
+    private void formataMoeda() {
+
+        String valorStr = "R$ 108.739,00";
+        valorStr = valorStr.replaceAll("[R$]", "").trim(); // string = 108.739,00
+        System.out.println("TESTANDO valorStr = " + valorStr);
+
+        String valorStr3 = "10873900";
+        int valorInt = Integer.valueOf(valorStr3).intValue();
+        System.out.println("TESTANDO valorInt = " + valorInt); // int = 10873900
+
+        String valorStr4 = "10873900";
+        double valorDouble = Double.valueOf(valorStr4).doubleValue();
+        System.out.println("TESTANDO valorDouble = " + valorDouble); // double = 1.08739E7
+
+        valorStr3 = "10873900";
+        Long valorLong = Long.parseLong(valorStr3);
+        System.out.println(java.text.NumberFormat.getCurrencyInstance().format(valorLong)); // Long = R$ 10.873.900,00
+
+        // Long    = R$ 10.873.900,00
+        // Correto = R$    108.739,00
+
+        double valorReal2 = 291933.1233;
+        int valorInteiro = 10873900;
+
+        java.text.NumberFormat dinheiro = java.text.NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
+        java.text.NumberFormat inteiro = java.text.NumberFormat.getInstance(new Locale("pt", "BR"));
+        java.text.NumberFormat numberFormat = java.text.NumberFormat.getNumberInstance(new Locale("pt", "BR"));
+
+        System.out.println("Valor Atual: " + valorReal2);
+        System.out.println("Valor Formatado em Moeda: " + dinheiro.format(valorReal2));
+        System.out.println("Valor Atual: " + valorInteiro);
+        System.out.println("Valor Formatado em Inteiro: " + inteiro.format(valorInteiro));
+        System.out.println("Valor Atual: " + valorReal2);
+        System.out.println("Valor Formatado padrão: " + numberFormat.format(valorReal2));
+
     }
 }
 
