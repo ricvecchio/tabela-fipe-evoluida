@@ -244,51 +244,22 @@ public class Principal {
 
     private void formataMoeda() {
 
-        String valorStr = "R$ 108.739,00";
-        valorStr = valorStr.replaceAll("[R$]", "").trim(); // string = 108.739,00
-        System.out.println("TESTANDO valorStr = " + valorStr);
-
         String valorStr3 = "10873900";
         int valorInt = Integer.valueOf(valorStr3).intValue();
         System.out.println("TESTANDO valorInt = " + valorInt); // int = 10873900
 
         String valorStr5 = "108739";
         Long valorLong2 = Long.parseLong(valorStr5);
-        System.out.println(java.text.NumberFormat.getCurrencyInstance().format(valorLong2)); // Long = R$ 108.739,00
+        System.out.println("TESTANDO valorLong2 = " + valorLong2); // Long = 108739
+        System.out.println(java.text.NumberFormat.getCurrencyInstance().format(valorLong2)); // String = R$ 108.739,00
 
-        double valorReal2 = 108739.00;
+        String valorStrX = "R$ 108.739,00";
+        valorStrX = valorStrX.replaceAll("[R$]", "").replace(".","").replace(",",".").trim();
+        System.out.println("TESTANDO valorStrX = " + valorStrX); // string = 108739.00
+        double valorDouble = Double.parseDouble(valorStrX); // double = 108739.0
 
-        java.text.NumberFormat dinheiro = java.text.NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
-
-        System.out.println("Valor Atual: " + valorReal2);
-        System.out.println("Valor Formatado em Moeda: " + dinheiro.format(valorReal2));
-
-        String salario = "R$ 108.739,00";
-        salario = salario.replace(".","").replace(",",".");
-        System.out.println("Valor String Replace: " + salario);
-
-
-//        int valorInteiro = 10873900;
-//
-//        java.text.NumberFormat inteiro = java.text.NumberFormat.getInstance(new Locale("pt", "BR"));
-//        java.text.NumberFormat numberFormat = java.text.NumberFormat.getNumberInstance(new Locale("pt", "BR"));
-//
-//        System.out.println("Valor Atual: " + valorInteiro);
-//        System.out.println("Valor Formatado em Inteiro: " + inteiro.format(valorInteiro));
-//        System.out.println("Valor Atual: " + valorReal2);
-//        System.out.println("Valor Formatado padrão: " + numberFormat.format(valorReal2));
-//
-//        valorStr3 = "10873900";
-//        Long valorLong = Long.parseLong(valorStr3);
-//        System.out.println(java.text.NumberFormat.getCurrencyInstance().format(valorLong)); // Long = R$ 10.873.900,00
-//
-//        String valorStr4 = "10873900";
-//        double valorDouble = Double.valueOf(valorStr4).doubleValue();
-//        System.out.println("TESTANDO valorDouble = " + valorDouble); // double = 1.08739E7
-//
-//        String salario2 = "108.739,00";
-//        java.text.NumberFormat nf2 = java.text.NumberFormat.getInstance(new Locale("pt", "BR"));
-//        System.out.println("Valor salario2: " + nf2.parse(salario2)); // Valor salario2: 108739
+        java.text.NumberFormat valorNF = java.text.NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
+        System.out.println("Valor Formatado em Moeda: " + valorNF.format(valorDouble));  // String = R$ 108.739,00
 
     }
 
