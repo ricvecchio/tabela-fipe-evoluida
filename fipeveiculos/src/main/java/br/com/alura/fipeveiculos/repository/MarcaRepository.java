@@ -31,7 +31,7 @@ public interface MarcaRepository extends JpaRepository<DadosMarca, Long> {
     @Modifying
     @Transactional
     @Query(value = "UPDATE Veiculos SET valor=:valorVeiculo, data_atualizacao=:dataAtualizacao WHERE codigo_modelo=:codigoModelo AND ano=:anoVeiculo", nativeQuery = true)
-    public void atualizaDadosVeiculo(String codigoModelo, Integer anoVeiculo, String valorVeiculo, String dataAtualizacao);
+    public void atualizaDadosVeiculo(String codigoModelo, Integer anoVeiculo, Double valorVeiculo, String dataAtualizacao);
 
     Optional<DadosMarca> findByCodigo(String codigoMarca);
 
@@ -49,7 +49,7 @@ public interface MarcaRepository extends JpaRepository<DadosMarca, Long> {
     List<Veiculo> veiculosPorTrecho(String trechoNomeVeiculo);
 
     @Query("SELECT v FROM DadosMarca m JOIN m.veiculos v WHERE v.modelo ILIKE %:nomeVeiculo% AND v.valor<=:valorVeiculo")
-    List<Veiculo> veiculosPorValores(String nomeVeiculo, String valorVeiculo);
+    List<Veiculo> veiculosPorValores(String nomeVeiculo, Double valorVeiculo);
 
     @Query("SELECT v FROM DadosMarca m JOIN m.veiculos v WHERE v.modelo ILIKE %:nomeVeiculo% AND v.ano>=:anoLimite")
     List<Veiculo> veiculosPorAno(String nomeVeiculo, int anoLimite);

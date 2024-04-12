@@ -204,7 +204,11 @@ public class Principal {
             dadosVeiculo.setSegmento(nomeSegmento);
             dadosVeiculo.setModelo(veiculos.get(y).modelo());
             dadosVeiculo.setAno(veiculos.get(y).ano());
-            dadosVeiculo.setValor(veiculos.get(y).valor());
+
+            String valorString = veiculos.get(y).valor();
+            Double valorDouble = formataValor(valorString);
+            dadosVeiculo.setValor(valorDouble);
+
             dadosVeiculo.setCombustivel(veiculos.get(y).combustivel());
 
             Date dataHoraSistema = new Date();
@@ -217,7 +221,7 @@ public class Principal {
             Long veiculoEncontrado = repositorio.veiculosPorCodigoEAno(codigoModelo, veiculos.get(y).ano());
 
             if (veiculoEncontrado > 0) {
-                repositorio.atualizaDadosVeiculo(codigoModelo, veiculos.get(y).ano(), veiculos.get(y).valor(), dadosVeiculo.getDataAtualizacao());
+                repositorio.atualizaDadosVeiculo(codigoModelo, veiculos.get(y).ano(), valorDouble, dadosVeiculo.getDataAtualizacao());
             } else {
                 marcaEncontrada.setVeiculos(listaVeiculos);
                 repositorio.save(marcaEncontrada);
@@ -226,41 +230,32 @@ public class Principal {
         System.out.println("\nTodos os veículos filtrados com avaliações por ano: \n");
         listaVeiculos.forEach(v ->
                 System.out.printf("Ano=%s, Valor=%s, Código=%s, Modelo=%s, Combustível=%s, Marca: %s\n",
-                        v.getAno(), v.getValor(), v.getCodigoModelo(), v.getModelo(), v.combustivel, v.marca));
+                        v.getAno()
+                        , java.text.NumberFormat.getCurrencyInstance().format(v.getValor())
+                        , v.getCodigoModelo()
+                        , v.getModelo()
+                        , v.combustivel
+                        , v.marca));
+    }
+
+    private static Double formataValor(String valorString) {
+
+        valorString = valorString.replaceAll("[R$]", "").replace(".","").replace(",",".").trim();
+        double valorDouble = Double.parseDouble(valorString);
+
+        // Formatação de moeda para enviar para Tela. Ex.: String = R$ 108.739,00
+//        java.text.NumberFormat valorNF = java.text.NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
+
+        return valorDouble;
     }
 
     private void buscarMarcasWebESalvarNaTabela() {
 
-        //EXCLUIR
-        formataMoeda();
-
-        //MANTER
         exibeMenuSegmento();
 
         if (segmento != 0) {
             listarMarcasWebESalvar();
         }
-    }
-
-    private void formataMoeda() {
-
-        String valorStr3 = "10873900";
-        int valorInt = Integer.valueOf(valorStr3).intValue();
-        System.out.println("TESTANDO valorInt = " + valorInt); // int = 10873900
-
-        String valorStr5 = "108739";
-        Long valorLong2 = Long.parseLong(valorStr5);
-        System.out.println("TESTANDO valorLong2 = " + valorLong2); // Long = 108739
-        System.out.println(java.text.NumberFormat.getCurrencyInstance().format(valorLong2)); // String = R$ 108.739,00
-
-        String valorStrX = "R$ 108.739,00";
-        valorStrX = valorStrX.replaceAll("[R$]", "").replace(".","").replace(",",".").trim();
-        System.out.println("TESTANDO valorStrX = " + valorStrX); // string = 108739.00
-        double valorDouble = Double.parseDouble(valorStrX); // double = 108739.0
-
-        java.text.NumberFormat valorNF = java.text.NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
-        System.out.println("Valor Formatado em Moeda: " + valorNF.format(valorDouble));  // String = R$ 108.739,00
-
     }
 
     private void buscarDetalheMarcaChatGPT() {
@@ -393,7 +388,11 @@ public class Principal {
             } else {
                 veiculosEncontrados.forEach(v ->
                         System.out.printf("Código: %s - Veículo: %s - Segmento: %s - Ano: %s - Valor: %s\n",
-                                v.getCodigoModelo(), v.getModelo(), v.getSegmento(), v.getAno(), v.getValor()));
+                                v.getCodigoModelo()
+                                , v.getModelo()
+                                , v.getSegmento()
+                                , v.getAno()
+                                , java.text.NumberFormat.getCurrencyInstance().format(v.getValor())));
             }
         }
     }
@@ -406,14 +405,15 @@ public class Principal {
             System.out.println("\n*** Aplicação Encerrada ***");
         } else {
             System.out.println("Qual o valor máximo do veículo?");
-            var valorVeiculo = leitura.nextLine();
+            var valorVeiculo = leitura.nextDouble();
             List<Veiculo> veiculosEncontrados = repositorio.veiculosPorValores(nomeVeiculo, valorVeiculo);
             if (veiculosEncontrados.isEmpty() == true) {
                 System.out.println("Não encontrado nenhum veículo com o valor abaixo de " + valorVeiculo);
             } else {
                 System.out.println("Veículos " + nomeVeiculo + " com valores menores que " + valorVeiculo);
                 veiculosEncontrados.forEach(v ->
-                        System.out.println(v.getModelo() + " Valores: " + v.getValor()));
+                        System.out.println(v.getModelo() +
+                                " Valores: " + java.text.NumberFormat.getCurrencyInstance().format(v.getValor())));
             }
         }
     }
@@ -434,7 +434,9 @@ public class Principal {
             } else {
                 System.out.println("Veículos " + nomeVeiculo + " com ano maior que " + anoLimite + ":");
                 veiculosAno.forEach(v ->
-                        System.out.println(v.getModelo() + " - Valores: " + v.getValor() + " - Ano: " + v.getAno()));
+                        System.out.println(v.getModelo() +
+                                " - Valores: " + java.text.NumberFormat.getCurrencyInstance().format(v.getValor()) +
+                                " - Ano: " + v.getAno()));
             }
         }
     }
