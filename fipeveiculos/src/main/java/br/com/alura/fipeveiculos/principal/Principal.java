@@ -5,17 +5,11 @@ import br.com.alura.fipeveiculos.repository.MarcaRepository;
 import br.com.alura.fipeveiculos.service.ConsultaChatGPT;
 import br.com.alura.fipeveiculos.service.ConsumoApi;
 import br.com.alura.fipeveiculos.service.ConverteDados;
-import org.springframework.format.annotation.NumberFormat;
 
 
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static org.springframework.format.annotation.NumberFormat.*;
 
 public class Principal {
 
@@ -46,6 +40,9 @@ public class Principal {
         this.repositorio = repositorio;
     }
 
+
+
+
     public void exibeMenu() {
         while (opcao != 0) {
             var menu = """
@@ -63,7 +60,6 @@ public class Principal {
                     10 - Buscar veículos do banco de dados a partir de uma data
                     11 - Buscar informações de um veículo pelo nome (ChatGPT) 
                     12 - Deletar banco de dados (Marcas/Veiculos)
-                    13 - Metodo para formatar Moeda R$ (TESTE)
                                     
                     0 - Sair                     """;
             System.out.println(menu);
@@ -106,9 +102,6 @@ public class Principal {
                     break;
                 case 12:
                     limparBancoDeDados();
-                    break;
-                case 13:
-                    formataMoeda();
                     break;
                 case 0:
                     System.out.println("Saindo...");
@@ -238,6 +231,10 @@ public class Principal {
 
     private void buscarMarcasWebESalvarNaTabela() {
 
+        //EXCLUIR
+        formataMoeda();
+
+        //MANTER
         exibeMenuSegmento();
 
         if (segmento != 0) {
@@ -245,6 +242,55 @@ public class Principal {
         }
     }
 
+    private void formataMoeda() {
+
+        String valorStr = "R$ 108.739,00";
+        valorStr = valorStr.replaceAll("[R$]", "").trim(); // string = 108.739,00
+        System.out.println("TESTANDO valorStr = " + valorStr);
+
+        String valorStr3 = "10873900";
+        int valorInt = Integer.valueOf(valorStr3).intValue();
+        System.out.println("TESTANDO valorInt = " + valorInt); // int = 10873900
+
+        String valorStr5 = "108739";
+        Long valorLong2 = Long.parseLong(valorStr5);
+        System.out.println(java.text.NumberFormat.getCurrencyInstance().format(valorLong2)); // Long = R$ 108.739,00
+
+        double valorReal2 = 108739.00;
+
+        java.text.NumberFormat dinheiro = java.text.NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
+
+        System.out.println("Valor Atual: " + valorReal2);
+        System.out.println("Valor Formatado em Moeda: " + dinheiro.format(valorReal2));
+
+        String salario = "R$ 108.739,00";
+        salario = salario.replace(".","").replace(",",".");
+        System.out.println("Valor String Replace: " + salario);
+
+
+//        int valorInteiro = 10873900;
+//
+//        java.text.NumberFormat inteiro = java.text.NumberFormat.getInstance(new Locale("pt", "BR"));
+//        java.text.NumberFormat numberFormat = java.text.NumberFormat.getNumberInstance(new Locale("pt", "BR"));
+//
+//        System.out.println("Valor Atual: " + valorInteiro);
+//        System.out.println("Valor Formatado em Inteiro: " + inteiro.format(valorInteiro));
+//        System.out.println("Valor Atual: " + valorReal2);
+//        System.out.println("Valor Formatado padrão: " + numberFormat.format(valorReal2));
+//
+//        valorStr3 = "10873900";
+//        Long valorLong = Long.parseLong(valorStr3);
+//        System.out.println(java.text.NumberFormat.getCurrencyInstance().format(valorLong)); // Long = R$ 10.873.900,00
+//
+//        String valorStr4 = "10873900";
+//        double valorDouble = Double.valueOf(valorStr4).doubleValue();
+//        System.out.println("TESTANDO valorDouble = " + valorDouble); // double = 1.08739E7
+//
+//        String salario2 = "108.739,00";
+//        java.text.NumberFormat nf2 = java.text.NumberFormat.getInstance(new Locale("pt", "BR"));
+//        System.out.println("Valor salario2: " + nf2.parse(salario2)); // Valor salario2: 108739
+
+    }
 
     private void buscarDetalheMarcaChatGPT() {
         consultaMarcasTabela();
@@ -543,42 +589,6 @@ public class Principal {
         }
     }
 
-    private void formataMoeda() {
-
-        String valorStr = "R$ 108.739,00";
-        valorStr = valorStr.replaceAll("[R$]", "").trim(); // string = 108.739,00
-        System.out.println("TESTANDO valorStr = " + valorStr);
-
-        String valorStr3 = "10873900";
-        int valorInt = Integer.valueOf(valorStr3).intValue();
-        System.out.println("TESTANDO valorInt = " + valorInt); // int = 10873900
-
-        String valorStr4 = "10873900";
-        double valorDouble = Double.valueOf(valorStr4).doubleValue();
-        System.out.println("TESTANDO valorDouble = " + valorDouble); // double = 1.08739E7
-
-        valorStr3 = "10873900";
-        Long valorLong = Long.parseLong(valorStr3);
-        System.out.println(java.text.NumberFormat.getCurrencyInstance().format(valorLong)); // Long = R$ 10.873.900,00
-
-        // Long    = R$ 10.873.900,00
-        // Correto = R$    108.739,00
-
-        double valorReal2 = 291933.1233;
-        int valorInteiro = 10873900;
-
-        java.text.NumberFormat dinheiro = java.text.NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
-        java.text.NumberFormat inteiro = java.text.NumberFormat.getInstance(new Locale("pt", "BR"));
-        java.text.NumberFormat numberFormat = java.text.NumberFormat.getNumberInstance(new Locale("pt", "BR"));
-
-        System.out.println("Valor Atual: " + valorReal2);
-        System.out.println("Valor Formatado em Moeda: " + dinheiro.format(valorReal2));
-        System.out.println("Valor Atual: " + valorInteiro);
-        System.out.println("Valor Formatado em Inteiro: " + inteiro.format(valorInteiro));
-        System.out.println("Valor Atual: " + valorReal2);
-        System.out.println("Valor Formatado padrão: " + numberFormat.format(valorReal2));
-
-    }
 }
 
 
