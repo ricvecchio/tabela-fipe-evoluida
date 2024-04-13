@@ -6,6 +6,7 @@ import br.com.alura.fipeveiculos.service.ConsultaChatGPT;
 import br.com.alura.fipeveiculos.service.ConsumoApi;
 import br.com.alura.fipeveiculos.service.ConverteDados;
 
+import java.text.Normalizer;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -133,7 +134,7 @@ public class Principal {
         enderecoBase = endereco;
         json = null;
         while (json == null) {
-            System.out.println("\nInforme o código da marca para consulta ou (S) para Encerrar:");
+            System.out.println("\nInforme o código da marca para consulta ou (S) para retornar ao Menu:");
             codigoMarca = leitura.nextLine();
             if (codigoMarca.equalsIgnoreCase("S")) {
                 System.out.println("\n*** Aplicação Encerrada ***");
@@ -273,7 +274,7 @@ public class Principal {
     }
 
     private void buscarMarcaTabelaPeloNome() {
-        System.out.println("Escolha uma marca pelo nome ou (S) para Encerrar:");
+        System.out.println("Escolha uma marca pelo nome ou (S) para retornar ao Menu:");
         var nomeMarca = leitura.nextLine();
 
         if (nomeMarca.equalsIgnoreCase("S")) {
@@ -327,6 +328,8 @@ public class Principal {
                 endereco = enderecoBase;
             } else {
                 nomeSegmento = veiculoFiltrado.get(0).getSegmento().toLowerCase();
+                nomeSegmento = Normalizer.normalize(nomeSegmento, Normalizer.Form.NFD);
+                nomeSegmento = nomeSegmento.replaceAll("[^\\p{ASCII}]", "");
                 endereco = URL_BASE + nomeSegmento + "/marcas/" + codigoMarca + "/modelos/";
                 json = consumo.obterDados(endereco);
             }
@@ -373,7 +376,7 @@ public class Principal {
     }
 
     private void buscarVeiculoTabelaPeloTrechoNome() {
-        System.out.println("\nDigite um trecho do veículo para consulta ou (S) para Encerrar:");
+        System.out.println("\nDigite um trecho do veículo para consulta ou (S) para retornar ao Menu:");
         var trechoNomeVeiculo = leitura.nextLine();
 
         if (trechoNomeVeiculo.equalsIgnoreCase("S")) {
@@ -389,13 +392,13 @@ public class Principal {
                                 , v.getModelo()
                                 , v.getSegmento()
                                 , v.getAno()
-                                , java.text.NumberFormat.getCurrencyInstance().format(v.getValor())));
+                                , v.getValor()));
             }
         }
     }
 
     private void buscarVeiculoTabelaPeloValor() {
-        System.out.println("Qual o veículo para busca ou (S) para Encerrar:");
+        System.out.println("Qual o veículo para busca ou (S) para retornar ao Menu:");
         var nomeVeiculo = leitura.nextLine();
 
         if (nomeVeiculo.equalsIgnoreCase("S")) {
@@ -416,30 +419,35 @@ public class Principal {
     }
 
     private void buscarVeiculoTabelaAposUmaData() {
-        System.out.println("Qual o veículo para busca ou (S) para Encerrar:");
+        System.out.println("Qual o veículo para busca ou (S) para retornar ao Menu:");
         var nomeVeiculo = leitura.nextLine();
 
         if (nomeVeiculo.equalsIgnoreCase("S")) {
             System.out.println("\n*** Aplicação Encerrada ***");
         } else {
             System.out.println("Digite o ano limite do veículo:");
-            var anoLimite = leitura.nextInt();
-            leitura.nextLine();
-            List<Veiculo> veiculosAno = repositorio.veiculosPorAno(nomeVeiculo, anoLimite);
-            if (veiculosAno.isEmpty() == true) {
-                System.out.println("Não encontrado nenhum veículo com o ano limite de " + veiculosAno);
+            var anoLimite = leitura.next();
+            boolean anoLimiteNumerico = anoLimite.matches("\\d{4}");
+            if (anoLimiteNumerico == true) {
+                leitura.nextLine();
+                List<Veiculo> veiculosAno = repositorio.veiculosPorAno(nomeVeiculo, Integer.parseInt(anoLimite));
+                if (veiculosAno.isEmpty() == true) {
+                    System.out.println("Não encontrado nenhum veículo com o ano limite de " + veiculosAno);
+                } else {
+                    System.out.println("Veículos " + nomeVeiculo + " com ano maior que " + anoLimite + ":");
+                    veiculosAno.forEach(v ->
+                            System.out.println(v.getModelo() +
+                                    " - Valores: " + java.text.NumberFormat.getCurrencyInstance().format(v.getValor()) +
+                                    " - Ano: " + v.getAno()));
+                }
             } else {
-                System.out.println("Veículos " + nomeVeiculo + " com ano maior que " + anoLimite + ":");
-                veiculosAno.forEach(v ->
-                        System.out.println(v.getModelo() +
-                                " - Valores: " + java.text.NumberFormat.getCurrencyInstance().format(v.getValor()) +
-                                " - Ano: " + v.getAno()));
+                System.out.println("Ano " + anoLimite + " inválido.");
             }
         }
     }
 
     private void buscarVeiculoChatGPT() {
-        System.out.println("Digite o nome do veículo para buscar as informações na IA ou (S) para Encerrar:");
+        System.out.println("Digite o nome do veículo para buscar as informações na IA ou (S) para retornar ao Menu:");
         var veiculo = leitura.nextLine();
 
         if (veiculo.equalsIgnoreCase("S")) {
@@ -514,7 +522,10 @@ public class Principal {
     private void consultaMarcasTabela() {
         marcas = repositorio.findAll();
         marcas.forEach(m ->
-                System.out.println("ID: " + m.getId() + " - Código: " + m.getCodigo() + " - Marca: " + m.getMarca()));
+                System.out.println("ID: " + m.getId() +
+                        " - Código: " + m.getCodigo() +
+                        " - Marca: " + m.getMarca() +
+                        " - Segmento: " + m.getSegmento()));
 
         if (marcas.isEmpty() == true) {
             System.out.println("Não existe registro no banco de dados!");
@@ -539,15 +550,15 @@ public class Principal {
             switch (segmento) {
                 case 1:
                     endereco = URL_BASE + "carros/marcas/";
-                    nomeSegmento = "Carros";
+                    nomeSegmento = "carros";
                     return;
                 case 2:
                     endereco = URL_BASE + "motos/marcas/";
-                    nomeSegmento = "Motos";
+                    nomeSegmento = "motos";
                     return;
                 case 3:
                     endereco = URL_BASE + "caminhoes/marcas/";
-                    nomeSegmento = "Caminhões";
+                    nomeSegmento = "caminhoes";
                     return;
                 case 0:
                     System.out.println("Saindo...");
