@@ -63,8 +63,6 @@ public class Principal {
                     0 - Sair                     """;
             System.out.println(menu);
             opcao = Console.readInt();
-            leitura.nextLine();
-
             switch (opcao) {
                 case 1:
                     buscarValoresWebESalvarTabela();
@@ -435,7 +433,6 @@ public class Principal {
             var anoLimite = Console.readInt();
 
             if (anoLimite != 0) {
-                leitura.nextLine();
                 List<Veiculo> veiculosAno = repositorio.veiculosPorAno(nomeVeiculo, anoLimite);
                 if (veiculosAno.isEmpty() == true) {
                     System.out.println("Não encontrado nenhum veículo com o ano limite de " + veiculosAno);
@@ -475,7 +472,6 @@ public class Principal {
                     0 - Sair                     """;
             System.out.println(menu);
             opcaoDelete = Console.readInt();
-            leitura.nextLine();
             switch (opcaoDelete) {
                 case 1:
                     repositorio.deleteVeiculoFull();
@@ -550,7 +546,6 @@ public class Principal {
                     0 - Sair                     """;
             System.out.println(menu);
             segmento = Console.readInt();
-            leitura.nextLine();
             switch (segmento) {
                 case 1:
                     endereco = URL_BASE + "carros/marcas/";
