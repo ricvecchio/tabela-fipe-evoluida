@@ -300,7 +300,7 @@ public class Principal {
             System.out.println("Não encontrado nenhum registro com a Marca: " + nomeMarca + " e segmento: " + segmentoMarca);
         } else {
             System.out.println(marcasEncontradas);
-        }
+}
     }
 
     public void updateDetalheIa() {
