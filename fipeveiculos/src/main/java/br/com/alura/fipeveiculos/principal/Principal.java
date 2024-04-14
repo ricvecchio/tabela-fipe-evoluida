@@ -7,9 +7,6 @@ import br.com.alura.fipeveiculos.service.ConsultaChatGPT;
 import br.com.alura.fipeveiculos.service.ConsumoApi;
 import br.com.alura.fipeveiculos.service.ConverteDados;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.text.Normalizer;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -552,7 +549,7 @@ public class Principal {
                                     
                     0 - Sair                     """;
             System.out.println(menu);
-            segmento = leitura.nextInt();
+            segmento = Console.readInt();
             leitura.nextLine();
             switch (segmento) {
                 case 1:
