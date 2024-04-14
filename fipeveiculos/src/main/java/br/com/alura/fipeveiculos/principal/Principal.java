@@ -2,10 +2,14 @@ package br.com.alura.fipeveiculos.principal;
 
 import br.com.alura.fipeveiculos.model.*;
 import br.com.alura.fipeveiculos.repository.MarcaRepository;
+import br.com.alura.fipeveiculos.service.Console;
 import br.com.alura.fipeveiculos.service.ConsultaChatGPT;
 import br.com.alura.fipeveiculos.service.ConsumoApi;
 import br.com.alura.fipeveiculos.service.ConverteDados;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.text.Normalizer;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -61,7 +65,7 @@ public class Principal {
                                     
                     0 - Sair                     """;
             System.out.println(menu);
-            opcao = leitura.nextInt();
+            opcao = Console.readInt();
             leitura.nextLine();
 
             switch (opcao) {
@@ -405,15 +409,19 @@ public class Principal {
             System.out.println("\n*** Aplicação Encerrada ***");
         } else {
             System.out.println("Qual o valor máximo do veículo?");
-            var valorVeiculo = leitura.nextDouble();
-            List<Veiculo> veiculosEncontrados = repositorio.veiculosPorValores(nomeVeiculo, valorVeiculo);
-            if (veiculosEncontrados.isEmpty() == true) {
-                System.out.println("Não encontrado nenhum veículo com o valor abaixo de " + valorVeiculo);
-            } else {
-                System.out.println("Veículos " + nomeVeiculo + " com valores menores que " + valorVeiculo);
-                veiculosEncontrados.forEach(v ->
-                        System.out.println(v.getModelo() +
-                                " Valores: " + java.text.NumberFormat.getCurrencyInstance().format(v.getValor())));
+
+            var valorVeiculo = Console.readDouble();
+
+            if (valorVeiculo != 0) {
+                List<Veiculo> veiculosEncontrados = repositorio.veiculosPorValores(nomeVeiculo, valorVeiculo);
+                if (veiculosEncontrados.isEmpty() == true) {
+                    System.out.println("Não encontrado nenhum veículo com o valor abaixo de " + valorVeiculo);
+                } else {
+                    System.out.println("Veículos " + nomeVeiculo + " com valores menores que " + valorVeiculo);
+                    veiculosEncontrados.forEach(v ->
+                            System.out.println(v.getModelo() +
+                                    " Valores: " + java.text.NumberFormat.getCurrencyInstance().format(v.getValor())));
+                }
             }
         }
     }
@@ -426,11 +434,12 @@ public class Principal {
             System.out.println("\n*** Aplicação Encerrada ***");
         } else {
             System.out.println("Digite o ano limite do veículo:");
-            var anoLimite = leitura.next();
-            boolean anoLimiteNumerico = anoLimite.matches("\\d{4}");
-            if (anoLimiteNumerico == true) {
+
+            var anoLimite = Console.readInt();
+
+            if (anoLimite != 0) {
                 leitura.nextLine();
-                List<Veiculo> veiculosAno = repositorio.veiculosPorAno(nomeVeiculo, Integer.parseInt(anoLimite));
+                List<Veiculo> veiculosAno = repositorio.veiculosPorAno(nomeVeiculo, anoLimite);
                 if (veiculosAno.isEmpty() == true) {
                     System.out.println("Não encontrado nenhum veículo com o ano limite de " + veiculosAno);
                 } else {
@@ -440,8 +449,6 @@ public class Principal {
                                     " - Valores: " + java.text.NumberFormat.getCurrencyInstance().format(v.getValor()) +
                                     " - Ano: " + v.getAno()));
                 }
-            } else {
-                System.out.println("Ano " + anoLimite + " inválido.");
             }
         }
     }
@@ -470,7 +477,7 @@ public class Principal {
                                     
                     0 - Sair                     """;
             System.out.println(menu);
-            opcaoDelete = leitura.nextInt();
+            opcaoDelete = Console.readInt();
             leitura.nextLine();
             switch (opcaoDelete) {
                 case 1:
@@ -569,7 +576,6 @@ public class Principal {
             }
         }
     }
-
 }
 
 
@@ -607,5 +613,10 @@ public class Principal {
                         .filter(m -> m.codigo().equals("9680"))
                         .map(m -> m.codigo())
                         .findFirst();
+
+      *** VERIFICA SE OS 4 PRIMEIROS BYTES SÃO NUMÉRICOS
+
+          var anoLimite = leitura.next();
+          boolean anoLimiteNumerico = anoLimite.matches("\\d{4}");
 
  */
